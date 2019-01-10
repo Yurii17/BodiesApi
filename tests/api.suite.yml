@@ -1,0 +1,12 @@
+actor: ApiTester
+modules:
+    enabled:
+    - Helper\Api
+    - REST:
+        url: http://bodies-api.george.dev.ergonized.com
+        depends: PhpBrowser
+        part: Json
+    - PhpBrowser:
+        url: http://bodies-api.george.dev.ergonized.com
+        headers:
+          accept: application/json

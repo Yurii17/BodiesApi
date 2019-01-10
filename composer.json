@@ -1,0 +1,16 @@
+{
+    "name": "yurii.lobas/BodiesApi",
+    "description": "tests",
+    "type": "codeception",
+    "require-dev": {
+        "facebook/webdriver": "^1.2",
+        "codeception/robo-paracept": "dev-master",
+        "codeception/codeception": "^2.4",
+        "bheller/images-generator": "^1.0",
+        "allure-framework/allure-codeception": "^1.2"
+    },
+    "require": {
+        "flow/jsonpath": "^0.4.0",
+        "fzaninotto/faker": "^1.8"
+    }
+}

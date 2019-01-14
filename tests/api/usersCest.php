@@ -6,7 +6,9 @@ class usersCest
 {
     public $route = '/users';
     public $userID;
+    public $userPhone;
 
+    //user + auth + sessions + cards + address + locations + workouts + settings + photo//
     /**
      * @param ApiTester $I
      * @throws Exception
@@ -21,17 +23,15 @@ class usersCest
     {
         return $this->route = '/users'.$params;
     }
-
-    private function login(ApiTester $I)
+    /**
+     * @param ApiTester $I
+     * @throws Exception
+     */
+    private function signInByPassword(ApiTester $I)
     {
-        $I->sendPOST('/users/login/by-password', [
-            "identity" => "yurii.lobas+9f5a7d9a3f16a915346826c3cbed3e1a@gmail.com",
-            "secret" => "[GqH\\Rf;?GDxlgX0"
-        ]);
-        $token = $I->grabDataFromResponseByJsonPath('$.token'); // [data : ['token': 21312321]]
-        $I->amBearerAuthenticated($token[0]);
-
+        $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
+
 
     //----------------Get all user list-----------------//
 
@@ -84,10 +84,10 @@ class usersCest
     public function sendPostCreateUserValid(ApiTester $I)
     {
         $data = [
-            "email" => 'yurii.lobas+'.fake::create()->md5.'@gmail.com', //safeEmail, domainName, null, '', @@, @gmail,com, 922.22.22.22@gmail.com
-            "firstName" => fake::create()->firstName, //'
-            "lastName" => fake::create()->lastName, // '', null, 'a', 'A', 'asd', 'asdasdasdasdasdasdasdasdasdasdasdasdasdasd'
-            "password" => fake::create()->password, // '', null, 1, asd, 213123123123123123123123123123123123123123
+            "email" => 'yurii.lobas+'.fake::create()->md5.'@gmail.com',
+            "firstName" => fake::create()->firstName,
+            "lastName" => fake::create()->lastName,
+            "password" => "6bfAC<kkThESw2",
             "pin" => fake::create()->randomNumber(4, true),
             "dateOfBirth" => fake::create()->date("2000-01-09"),
             "defaultZip" => fake::create()->randomNumber(6,true),
@@ -107,6 +107,7 @@ class usersCest
         $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->userPhone = $I->grabDataFromResponseByJsonPath('$.phoneNumber');
     }
 
 
@@ -225,6 +226,25 @@ class usersCest
             "message" => "Email is not a valid email address."]);
     }
 
+    public function sendPostPasswordError(ApiTester $I)
+    {
+        $data = [
+            "email" => "test1312@example.com",
+            "firstName" => "John",
+            "lastName" => "Travolta",
+            "password" => "%ty*<yWwR",
+            "pin" => "1010",
+            "dateOfBirth" => "1970-01-01",
+            "defaultZip" => "622854",
+            "phoneNumber" => "(651) 514-8975 x1340"
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeResponseCodeIs(422);
+        $I->seeErrorMessage([
+            "field" => "password",
+            "message" => "Password too weak, it must contains letters(upper and lower cased), digits and special chars"]);
+    }
+
     public function sendPostCreateUserZipError(ApiTester $I)
     {
         $data = [
@@ -245,48 +265,222 @@ class usersCest
     }
 
 
-
-
-
-    //----------------Get User by Id-------------------//
+    //-------------------------Get User by Id-------------------//
 
     /**
      * @param ApiTester $I
-     * @before login
+     * @before signInByPassword
      */
-    public function sendGetUserByID(ApiTester $I)
+    public function sendGetUserByID30(ApiTester $I)
     {
-        $this->userID = 25;
+        $this->userID = 30;
         $this->setRoute('/'.$this->userID);
-        $I->sendGET($this->route);
+
+        $data = [
+            'email' => 'yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com',
+            'firstName' => 'Jalon',
+            'lastName' => 'Braun',
+            'phoneNumber' => '+8653057446',
+            'dateOfBirth' => '2000-01-09',
+            'defaultZip' => '266453',
+        ];
+        $I->sendGET($this->route, $data);
         $I->seeResponseCodeIs(200);
-        $userData = $I->getUserData('user.txt');
-        var_dump($userData);
-        foreach ($userData as $item) {
+        foreach ($data as $item) {
             $I->seeResponseContains($item);
         }
     }
 
-    public function sendGetUser1(ApiTester $I)
+    //------------------Sing In By Password----------------------------//
+
+    public function sendPostSignInByPassword(ApiTester $I)
     {
-        $I->sendGET($this->route);
-        $I->seeForbiddenErrorMessage(["message" => "Login Required"]);
+        $user = $I->getUserData('user.txt');
+        var_dump($user);
+        $I->loginAs($user['email'], $user['password']);
+        $I->seeResponseCodeIs(200);
+    }
+
+
+    //---------------------------Sign In By Pin-------------------------------//
+
+    public function sendPostSignInByPin(ApiTester $I)
+    {
+        $user = $I->getUserDataByPin('user.txt');
+        var_dump($user);
+//        $I->loginAs($user['email'], $user['password']);
+        $I->loginPin($user['email'], $user['pin']);
+        $I->seeResponseCodeIs(200);
     }
 
 
 
-    //------------------Confirm email-------------------------//
+    //------------------------Send Post Confirm email-------------------------//
 
     public function sendPostConfirmEmail(ApiTester $I)
     {
-        $this->setRoute('/'.$this->userID.'/confirm-email');
-        $I->sendPOST($this->route);
+        $user = $I->getUserDataByPin('user.txt');
+        var_dump($user);
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/confirm-email');
+        $I->sendPOST($this->route,
+            ["code" => 1759]);
     }
+
 
     public function sendGetConfirmEmail(ApiTester $I)
     {
         $I->seeMethodNotAllowed();
     }
+
+    //------------------------Send Post Confirm Phone-------------------------//
+
+    public function sendPostConfirmPhone(ApiTester $I)
+    {
+        $user = $I->getUserDataByPin('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/confirm-email');
+        $I->sendPOST($this->route,
+            ["code" => 3352]);
+    }
+
+
+    //---------------------Send Post Re-send Confirm Email-----------------------//
+
+    public function sendPostReSendConfirmEmail(ApiTester $I)
+    {
+        $user = $I->getUserDataByPin('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/confirm-email');
+        $I->sendPOST($this->route);
+        $I->seeResponseContains(["result" => [true]]);
+    }
+
+    //--------------------Send Post Re-send Confirm Phone-------------------------//
+
+    public function sendPostReSendConfirmPhone(ApiTester $I)
+    {
+        $user = $I->getUserDataByPin('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/confirm-phone');
+        $I->sendPOST($this->route);
+        $I->seeResponseContains(["result" => [true]]);
+    }
+
+
+    //-------------------- Current User Info -------------------------//
+
+    public function sendGetCurrentUserInfo(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $I->sendGet('/users/me');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //-----------------------Password Strength------------------------//
+
+    public function sendGetPasswordStrength(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $I->sendGet('/users/login/password-strength');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //-----------------------Set Random Password-------------------------------//
+
+    public function sendPostSetRandomPassword(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $I->sendPOST("/users/set-random", [
+                "email" => $user['email']
+            ]);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //---------------------Reset password by Email------------------------//
+
+    public function sendPostResetPasswordByEmail(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $I->sendPOST("/users/reset/by-email", [
+            "email" => $user['email']
+        ]);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //---------------------Reset password by Phone------------------------//
+
+    public function sendPostResetPasswordByPhone(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $I->sendPOST("/users/reset/by-phone", [
+            "phoneNumber" => $user['phoneNumber']
+        ]);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //------------------------Set New Password----------------------//
+
+    public function sendPostSetNewPassword(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/set-password');
+        $I->sendPOST($this->route, [
+            "password" => "6bfAC<kkThESw2",
+            "token" => ""
+        ]);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //-----------------Validate Code-----------------------------/
+
+    public function sendPostValidateCode(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/validate-code');
+        $I->sendPOST($this->route, [
+            "id" => $this->userID[0] ,
+            "code" => "1111"
+        ]);
+        $I->seeResponseCodeIs(200);
+    }
+
+    public function sendPostValidateCodeError(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $I->loginAs($user['email'], $user['password']);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->setRoute('/'.$this->userID[0].'/validate-code');
+        $I->sendPOST($this->route, [
+            "id" => $this->userID[0] ,
+            "code" => "132323"
+        ]);
+        $I->seeResponseCodeIs(422);
+        $I->seeErrorMessage([
+            "field" => "code",
+            "message" => "Code should contain at most 4 characters."
+        ]);
+    }
+
+
+
+
+
+
+
 
 
 

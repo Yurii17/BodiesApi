@@ -1,6 +1,14 @@
 <?php
 
 use usersCest;
+use authCest;
+use sessionsCest;
+use cardsCest;
+use addressCest;
+use locationsCest;
+use workoutsCest;
+use settingsCest;
+use photoCest;
 
 /**
  * Inherited Methods
@@ -24,6 +32,7 @@ class ApiTester extends \Codeception\Actor
    /**
     * Define custom actions here
     */
+
 
    public function removeAuthToken()
    {
@@ -58,7 +67,23 @@ class ApiTester extends \Codeception\Actor
     {
         $data = file_get_contents(codecept_data_dir($file));
         $data = explode(' ', $data);
-        $this->user = [
+        $user = [
+            'email' => $data[0],
+            'firstName' => $data[1],
+            'lastName' => $data[2],
+            'password' => $data[3],
+            'dataOfBirth' => $data[5],
+            'defaultZip' => $data[6],
+            'phoneNumber' => $data[7]
+        ];
+        return $user;
+    }
+
+    public function getUserDataByPin($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
             'email' => $data[0],
             'firstName' => $data[1],
             'lastName' => $data[2],
@@ -68,7 +93,28 @@ class ApiTester extends \Codeception\Actor
             'defaultZip' => $data[6],
             'phoneNumber' => $data[7]
         ];
-        return $this->user;
-
+        return $user;
     }
+
+    public function loginAs($email, $secret)
+    {
+        $this->sendPOST('/users/login/by-password', [
+            "identity" => $email,
+            "secret" => $secret
+        ]);
+        $token = $this->grabDataFromResponseByJsonPath('$.token'); // [data : ['token': 21312321]]
+        $this->amBearerAuthenticated($token[0]);
+    }
+
+
+    public function loginPin($email, $pin)
+    {
+        $this->sendPOST('/users/login/by-pin', [
+            "identity" => $email,
+            "secret" => $pin
+        ]);
+        $token = $this->grabDataFromResponseByJsonPath('$.token'); // [data : ['token': 21312321]]
+        $this->amBearerAuthenticated($token[0]);
+    }
+
 }

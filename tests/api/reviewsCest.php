@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+use Faker\Factory as fake;
 
 class reviewsCest
 {
@@ -48,7 +50,11 @@ class reviewsCest
      */
     public function sendPostCreate(ApiTester $I)
     {
-        $I->sendPOST($this->route);
+        $data = [
+            'entityId' => fake::create()->randomNumber(2),
+            'entityClass' => 'host'
+        ];
+        $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);
     }
 
@@ -60,7 +66,11 @@ class reviewsCest
     public function sendSendPutModifyById(ApiTester $I)
     {
         $this->userID = 1;
-        $I->sendPUT($this->route.'/'.$this->userID);
+        $data = [
+            'entityId' => fake::create()->randomNumber(2),
+            'entityClass' => 'host'
+        ];
+        $I->sendPUT($this->route.'/'.$this->userID, $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -71,7 +81,7 @@ class reviewsCest
      */
     public function sendDeleteByID(ApiTester $I)
     {
-        $this->userID = 2;
+        $this->userID = 3;
         $I->sendDELETE($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(204);
     }

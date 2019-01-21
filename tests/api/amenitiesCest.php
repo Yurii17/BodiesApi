@@ -7,6 +7,7 @@ class amenitiesCest
 
     public $route = '/amenities';
     public $userID;
+    public $token;
 
     private function setRoute($params)
     {
@@ -26,13 +27,11 @@ class amenitiesCest
     }
 
     //---------------- Listing of amenities ----------------------//
-
     public function sendGetListingOfAmenities(ApiTester $I)
     {
         $I->sendGET($this->route);
         $I->seeResponseCodeIs(200);
     }
-
 
     //---------------- Show amenity by ID ----------------------//
     /**
@@ -55,45 +54,84 @@ class amenitiesCest
         $I->seeResponseCodeIs(200);
     }
 
-    //---------------- Create new amenity ----------------------//
+    //---------------- Send Post Create new amenity Valid ----------------------//
     /**
      * @param ApiTester $I
-     * @before signInByPassword
+     * @throws Exception
      */
-    public function sendPostCreateNewAmenity(ApiTester $I)
+    public function sendPostCreateNewAmenityValid(ApiTester $I)
     {
         $data = [
-            "code" => "FWF",
-            "name" => fake::create()->text(20),
+            'id' => '1',
+            'createdAt' => '2019-01-14',
+            'modifiedAt' => '2019-01-19',
+            'expireAt' => null,
+            'status' => null,
+            'code' => 'FWF',
+            'name' => fake::create()->text(20),
         ];
+        $I->saveUserAddress([
+            $data['id'], ' ',
+            $data['createdAt'], ' ',
+            $data['modifiedAt'], ' ',
+            $data['expireAt'], ' ',
+            $data['status'], ' ',
+            $data['code'], ' ',
+            $data['name'], ' '
+        ], 'userAmenities.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->token = $I->grabDataFromResponseByJsonPath('$.token');
         $I->seeResponseCodeIs(201);
     }
 
-    //---------------- Modify amenity by ID ----------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
+    //---------------- Send Put Modify amenity by ID ----------------------//
     public function sendPutModifyAmenity(ApiTester $I)
     {
-        $this->userID = 2;
         $data = [
             "code" => "FWF",
             "name" => fake::create()->text(20),
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------------- Delete amenity --------------------------//
-
+    //------------------- Send Delete amenity --------------------------//
     public function sendDeleteAmenityById(ApiTester $I)
     {
-        $this->userID = 4;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
+
+    //---------------- Send Post Create Fake Status Amenity Error ----------------------//
+    public function sendPostCreateFakeStatusAmenityError(ApiTester $I)
+    {
+        $data = [
+            'status' => fake::create()->text(20)
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'status',
+            'message' => 'Status should contain at most 8 characters.'
+        ]);
+    }
+
+    //---------------- Send Post Create Fake Code Amenity Error ----------------------//
+    public function sendPostCreateFakeCodeAmenityError(ApiTester $I)
+    {
+        $data = [
+            'code' => fake::create()->text(20)
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'code',
+            'message' => 'Code should contain at most 10 characters.'
+        ]);
+    }
+
+
+
+
 
 
 

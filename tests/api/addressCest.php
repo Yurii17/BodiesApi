@@ -5,14 +5,17 @@ use Faker\Factory as fake;
 class addressCest
 {
     public $route = '/addresses';
+    public $userID;
+    public $token;
 
     private function setRoute($params)
     {
         return $this->route = '/addresses'.$params;
     }
 
-    public function _before(ApiTester $I)
+    private function signInByPassword(ApiTester $I)
     {
+        $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
 
@@ -24,118 +27,195 @@ class addressCest
     }
 
     //----------------Create new address-----------------------//
-
+    /**
+     * @param ApiTester $I
+     * @throws Exception
+     */
     public function sendPostCreateNewAddress(ApiTester $I)
     {
-        $I->sendPOST('/addresses', [
-            "name" => "First Address",
-            "address1" => "Madison Ave 2534",
-            "address2" => "Madison Ave 365",
-            "postalCode" => fake::create()->randomNumber(6,true),
-            "city" => "Union City",
-            "state" => "CA",
-            "lat" => "37.60169400",
-            "lon" => "-122.06193000"
-        ]);
+        $data = [
+            'name' => 'First Address',
+            'address1' => 'Madison Ave 2534',
+            'address2' => 'Madison Ave 365',
+            'postalCode' => fake::create()->randomNumber(6,true),
+            'city' => 'Union City',
+            'state' => 'CA',
+            'lat' => '37.60169400',
+            'lon' => '-122.06193000',
+            'status' => fake::create()->randomNumber(6,true),
+            'reviewId' => '1',
+            'reviewState' => fake::create()->randomNumber(6,true)
+        ];
+        $I->saveUserAddress([
+            $data['name'], ' ',
+            $data['address1'], ' ',
+            $data['address2'], ' ',
+            $data['postalCode'], ' ',
+            $data['city'], ' ',
+            $data['state'], ' ',
+            $data['lat'], ' ',
+            $data['lon'], ' ',
+            $data['status'], ' ',
+            $data['reviewId'], ' ',
+            $data['reviewState'], ' '
+        ], 'userAddress.txt');
+        $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->token = $I->grabDataFromResponseByJsonPath('$.token');
         $I->seeResponseCodeIs(201);
     }
 
-    //----------------Show address--------------------//
+    //------------- Send Get Show address By Id --------------------//
 
-    public function sendGetShowAddress(ApiTester $I)
+    public function sendGetShowAddressById(ApiTester $I)
     {
-        $this->userID = 5;
-        $this->setRoute('/'.$this->userID);
-
-        $data = [
-            "id" => 5,
-            "createdAt" => "2018-12-10 14:16:10",
-            "modifiedAt" => "2018-12-10 14:16:10",
-            "expireAt" => null,
-            "status" => null,
-            "reviewId" => null,
-            "reviewState" => null,
-            "postalCode" => "94587",
-            "city" => "Union City",
-            "state" => "CA",
-            "lat" => "37.60169400",
-            "lon" => "-122.06193000",
-            "userId" => null,
-            "address1" => "Madison Ave 2534",
-            "address2" => "Madison Ave 365",
-            "name" => "First Address"
-        ];
-        $I->sendGET($this->route, $data);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
-    //-----------------Modify Address---------------------//
+    //----------------- Send Put Modify Address By Id ---------------------//
 
     public function sendPutModifyAddress(ApiTester $I)
     {
-        $this->userID = 8;
-        $this->setRoute('/'.$this->userID);
-
         $data = [
-            "name" => "First Address",
-            "address1" => fake::create()->address,
-            "address2" => "Madison Ave 365",
-            "postalCode" => fake::create()->randomNumber(6,true),
-            "city" => "Union City",
-            "state" => "CA",
-            "lat" => "37.60169400",
-            "lon" => "-122.06193000"
+            'createdAt' => '2018-12-10 14:16:10',
+            'modifiedAt' => '2018-12-10 14:16:10',
+            'expireAt' => null,
+            'status' => null,
+            'reviewId' => null,
+            'reviewState' => null,
+            'postalCode' => fake::create()->randomNumber(6,true),
+            'city' => 'Union City',
+            'state' => 'CA',
+            'lat' => '37.60169400',
+            'lon' => '-122.06193000',
+            'userId' => null,
+            'address1' => 'Madison Ave 2534',
+            'address2' => 'Madison Ave 365',
+            'name' => 'First Address'
         ];
-        $I->sendPUT($this->route, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //-----------------Delete Address-------------------//
+    //--------------Send Delete Address By ID-------------------//
 
     public function sendDeleteAddress(ApiTester $I)
     {
-        $this->userID = 187;
-        $this->setRoute('/'.$this->userID);
-        $I->sendDELETE($this->route);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 
-    //-----------------Check Address-------------------//
+    //-------------- Send Post Status Field Address Error----------------------------------//
 
-    public function sendGetCheckAddress(ApiTester $I)
+    public function sendPostStatusFieldAddressError(ApiTester $I)
+    {
+        $data = [
+            'name' => 'First Address',
+            'address1' => 'Madison Ave 2534',
+            'address2' => 'Madison Ave 365',
+            'postalCode' => fake::create()->randomNumber(6,true),
+            'city' => 'Union City',
+            'state' => 'CA',
+            'lat' => '37.60169400',
+            'lon' => '-122.06193000',
+            'status' => fake::create()->text(1000),
+            'reviewId' => '1',
+            'reviewState' => fake::create()->randomNumber(6,true)
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+                'field' => 'status',
+                'message' => 'Status should contain at most 8 characters.'
+        ]);
+    }
+
+
+    //------------- Send Get By Zip Address -------------------//
+
+    public function sendGetZipAddressValid(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/zip/94587');
+        $I->seeResponseCodeIs(200);
+    }
+
+    public function sendGetFakeZipAddressError(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/zip/'.fake::create()->text(10));
+        $I->seeResponseCodeIs(404);
+    }
+
+    public function sendGetNullZipAddressError(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/zip/');
+        $I->seeResponseCodeIs(404);
+    }
+
+    //------------- Send Get By Check Address --------------------//
+    public function sendGetCheckAddressValid(ApiTester $I)
     {
         $data = [
             'zip' => '94587'
         ];
-        $I->sendGET('/addresses/check', $data);
+        $I->sendGET($this->route.'/check', $data);
         $I->seeResponseCodeIs(200);
     }
 
-    public function sendGetCheckAddressError(ApiTester $I)
+    public function sendGetCheckAddressFakeZipError(ApiTester $I)
     {
         $data = [
-            'zip' => ''
+            'zip' => fake::create()->text(10)
         ];
-        $I->sendGET('/addresses/check', $data);
-        $I->seeResponseCodeIs(422);
+        $I->sendGET($this->route.'/check', $data);
+        $I->seeErrorMessage([
+            'name' => 'Unprocessable entity',
+            'message' => 'Validation error'
+        ]);
     }
 
-    //-----------Get city and state by first characters---------------//
-
-    public function sendGetGetCityAndStateByFirstCharacters(ApiTester $I)
+    public function sendGetCheckAddressZipNullError(ApiTester $I)
     {
-        $I->sendGET('/addresses/city/Union');
+        $data = [
+            'zip' => ' '
+        ];
+        $I->sendGET($this->route.'/check', $data);
+        $I->seeErrorMessage([
+            'name' => 'Unprocessable entity',
+            'message' => 'Validation error'
+        ]);
+    }
+
+    //-----------Send Get city and state by first characters---------------//
+
+    public function sendGetStateByFirstCharactersValid(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/city/California');
         $I->seeResponseCodeIs(200);
     }
 
-    public function sendGetGetCityAndStateByFirstCharactersError(ApiTester $I)
+    public function sendGetFakeStateByFirstCharactersError(ApiTester $I)
     {
-        $I->sendGET('/addresses/city/Union City');
+        $I->sendGET($this->route.'/city/California'.fake::create()->text(10));
         $I->seeResponseCodeIs(404);
     }
 
+    public function sendGetCityAndStateByFirstCharactersValid(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/city/Union');
+        $I->seeResponseCodeIs(200);
+    }
 
+    public function sendGetCityAndFakeStateByFirstCharactersError(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/city/Union'.fake::create()->text(10));
+        $I->seeResponseCodeIs(404);
+    }
 
+    public function sendGetCityAndNullStateByFirstCharactersError(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/city/');
+        $I->seeResponseCodeIs(404);
+    }
 
 
 

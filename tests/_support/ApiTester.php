@@ -143,6 +143,27 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveUserAmenities(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getUserAmenitiesData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'id' => $data[0],
+            'createdAt' => $data[1],
+            'modifiedAt' => $data[2],
+            'expireAt' => $data[3],
+            'status' => $data[4],
+            'code' => $data[5],
+            'name' => $data[6]
+        ];
+        return $user;
+    }
+
     public function loginAs($email, $secret)
     {
         $this->sendPOST('/users/login/by-password', [

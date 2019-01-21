@@ -1,14 +1,16 @@
 <?php
 
-use usersCest;
-use authCest;
-use sessionsCest;
-use cardsCest;
-use addressCest;
-use locationsCest;
-use workoutsCest;
-use settingsCest;
-use photoCest;
+//use usersCest;
+//use authCest;
+//use sessionsCest;
+//use cardsCest;
+//use addressCest;
+//use locationsCest;
+//use workoutsCest;
+//use settingsCest;
+//use photoCest;
+use Faker\Factory as faker;
+use bheller\ImagesGenerator\ImagesGeneratorProvider;
 
 /**
  * Inherited Methods
@@ -96,6 +98,51 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveUserActivity(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getUserActivityData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'name' => $data[0],
+            'code' => $data[1],
+            'status' => $data[2],
+            'shortDesc' => $data[3],
+            'fullDesc' => $data[4],
+            'isCertRequired' => $data[5]
+        ];
+        return $user;
+    }
+
+    public function saveUserAddress(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getUserAddressData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'name' => $data[0],
+            'address1' => $data[1],
+            'address2' => $data[2],
+            'postalCode' => $data[3],
+            'city' => $data[4],
+            'state' => $data[5],
+            'lat' => $data[6],
+            'lon' => $data[7],
+            'status' => $data[8],
+            'reviewId' => $data[9],
+            'reviewState' => $data[10]
+        ];
+        return $user;
+    }
+
     public function loginAs($email, $secret)
     {
         $this->sendPOST('/users/login/by-password', [
@@ -107,14 +154,100 @@ class ApiTester extends \Codeception\Actor
     }
 
 
-    public function loginPin($email, $pin)
+    public function loginPin($userID, $pin)
     {
         $this->sendPOST('/users/login/by-pin', [
-            "identity" => $email,
+            "identity" => $userID,
             "secret" => $pin
         ]);
         $token = $this->grabDataFromResponseByJsonPath('$.token'); // [data : ['token': 21312321]]
         $this->amBearerAuthenticated($token[0]);
     }
+
+    /**
+     * @return array|bool
+     */
+    public function fileData($fileNum, $fileType = null)
+    {
+        $path = codecept_data_dir().'image';
+        //Verify if folder is exist
+        if(!is_dir($path)){
+            if(!mkdir($path, 0700, TRUE)) {
+                echo "Cannot create $path\n";
+                return false;
+            }
+        }
+        if(is_null($fileType)) {
+            $fileType = 'png';
+        }
+        //folder preference for read\write
+        @chmod($path, 0700);
+        $generator = faker::create();
+        $generator->addProvider(new ImagesGeneratorProvider(faker::create()));
+        for ($i = 0; $i < $fileNum; $i++) {
+            $generator->imageGenerator($path,
+                faker::create()->numberBetween(128, 1024),
+                faker::create()->numberBetween(1024, 128), $fileType,
+                true,
+                faker::create()->word,
+                faker::create()->hexColor,
+                faker::create()->hexColor
+            );
+        }
+        $this->deleteHeader('Content-type');
+        $rep = strlen($path.'/');
+        $files = glob($path.'/'."*.png");
+        $fileData = [];
+        foreach ($files as $key) {
+            $file = substr($key, $rep);
+            array_push($fileData, $file);
+        }
+        return $fileData;
+    }
+
+    public function _afterSuite()
+    {
+        $path = codecept_data_dir() . 'image';
+        if (!is_dir($path)) {
+            echo "Cannot find $path\n";
+            return false;
+        } else {
+            $rep = strlen($path . '/');
+            $files = glob($path . '/' . "*.png");
+            $fileData = [];
+            foreach ($files as $key) {
+                $file = substr($key, $rep);
+                array_push($fileData, $file);
+            }
+            if (is_array($fileData)) {
+                foreach ($fileData as $key) {
+                    unlink(codecept_data_dir() . 'image/' . $key);
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

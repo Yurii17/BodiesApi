@@ -24,11 +24,8 @@ class messagesCest
     }
 
     //------------- Send Post Create New Messages ---------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendPostCreateNewMessages(ApiTester $I)
+
+    public function sendPostCreateNewMessagesValid(ApiTester $I)
     {
         $data = [
             'senderId' => '1',
@@ -87,7 +84,7 @@ class messagesCest
 
 
 
-    
+
 
 
 

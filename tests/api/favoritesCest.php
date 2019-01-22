@@ -41,7 +41,7 @@ class favoritesCest
     {
         $data = [
             'entityClass' => 'host',
-            'entityId' => fake::create()->randomNumber(2)
+            'entityId' => fake::create()->randomNumber(2, true)
         ];
         $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);

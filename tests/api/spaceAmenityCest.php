@@ -62,6 +62,6 @@ class spaceAmenityCest
         $I->seeResponseCodeIs(204);
     }
 
-    
+
 
 }

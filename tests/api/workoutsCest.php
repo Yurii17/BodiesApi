@@ -53,7 +53,7 @@ class workoutsCest
                 fake::create()->randomNumber(1, true),
                 fake::create()->randomNumber(1, true)
         ],
-            "sessionId" => 3
+            "sessionId" => fake::create()->randomNumber(2, true)
         ];
         $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);
@@ -67,8 +67,8 @@ class workoutsCest
     public function sendPostCreateNewWorkoutsQuantity(ApiTester $I)
     {
         $data = [
-            "quantity" => fake::create()->randomNumber(1, true),
-            "sessionId" => 3
+            "quantity" => fake::create()->randomNumber(2, true),
+            "sessionId" => fake::create()->randomNumber(2, true)
         ];
         $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);
@@ -83,7 +83,7 @@ class workoutsCest
     {
         $data = [
             "trainingId" => fake::create()->randomNumber(2, true),
-            "sessionId" => 3
+            "sessionId" => fake::create()->randomNumber(2, true)
         ];
         $I->sendPUT($this->route.'/assign', $data);
         $I->seeResponseCodeIs(200);

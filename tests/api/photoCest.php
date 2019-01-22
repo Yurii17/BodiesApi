@@ -1,6 +1,7 @@
 <?php
 
-use Faker\Factory as fake;
+use Faker\Factory as faker;
+use bheller\ImagesGenerator\ImagesGeneratorProvider;
 
 class photoCest
 {
@@ -33,11 +34,25 @@ class photoCest
     {
         $data = [
             "entityId" => 1,
-            "entityClass" => "user",
-            "files[]" => 'photo.png'
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(200);
+            "entityClass" => "user"
+            ];
+        $path = codecept_data_dir() . 'image';
+        $file = $I->fileData(2, 'png');
+        $I->sendPOST($this->route, $data, [
+            'file' => [
+                'name' => $file[0],
+                'error' => UPLOAD_ERR_OK,
+                'size' => filesize($path . '/' . ($file[0])),
+                'tmp_name' => $path . '/' . ($file[0])
+            ],
+            [
+                'name' => $file[1],
+                'error' => UPLOAD_ERR_OK,
+                'size' => filesize($path . '/' . ($file[1])),
+                'tmp_name' => $path . '/' . ($file[1])
+            ]
+        ]);
+        $I->seeResponseCodeIs(201);
     }
 
     //--------------Listing of photos--------------------//
@@ -70,10 +85,13 @@ class photoCest
      */
     public function sendDeletePhotos(ApiTester $I)
     {
-        $this->userID = 2;
+        $this->userID = 47;
         $I->sendDELETE($this->route.'/'.$this->userID);
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(204);
     }
+
+
+
 
 
 

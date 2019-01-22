@@ -71,7 +71,7 @@ class locationsCest
     public function sendGetShowLocationByID(ApiTester $I)
     {
         $this->locationID = 159;
-        $I->sendGet($this->route.'/'.$this->locationID);
+        $I->sendGET($this->route.'/'.$this->locationID);
         $I->seeResponseCodeIs(200);
     }
 

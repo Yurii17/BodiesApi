@@ -7,6 +7,7 @@ class attachmentsCest
 {
     public $route = '/attachments';
     public $userID;
+    public $token;
 
     private function setRoute($params)
     {
@@ -27,13 +28,14 @@ class attachmentsCest
     //-------------- Upload new attachment -----------------------//
     /**
      * @param ApiTester $I
+     * @throws Exception
      * @before signInByPassword
      */
     public function sendPostUploadNewAttachment(ApiTester $I)
     {
         $data = [
-            "entityId" => fake::create()->randomNumber(2, true),
-            "entityClass" => "user"
+            'entityId' => fake::create()->randomNumber(2, true),
+            'entityClass' => 'user'
         ];
         $path = codecept_data_dir() . 'image';
         $file = $I->fileData(2, 'png');
@@ -51,10 +53,11 @@ class attachmentsCest
                 'tmp_name' => $path . '/' . ($file[1])
             ]
         ]);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
-    //--------------Listing of attachments--------------------//
+    //-------------- Send Get Listing of Attachments  ----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -65,26 +68,26 @@ class attachmentsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------Show attachments By ID--------------------//
+    //------------ Send Get Show Attachments By ID --------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetShowAttachmentsById(ApiTester $I)
     {
-        $this->userID = 33;
+        $this->userID = 64;
         $I->sendGET($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------- Delete Attachments By ID --------------------//
+    //-------------- Send Delete Attachments By ID --------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendDeleteAttachmentsById(ApiTester $I)
     {
-        $this->userID = 2;
+        $this->userID = 64;
         $I->sendDELETE($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(204);
     }

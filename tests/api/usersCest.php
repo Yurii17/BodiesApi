@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Faker\Factory as fake;
 
@@ -8,7 +8,10 @@ class usersCest
     public $userID;
     public $userPhone;
 
-    //user + auth + sessions + cards + address + locations + workouts + settings + photo//
+    // user + auth + sessions + cards + address + locations + workouts + settings + photo + billng
+    // messages + notifications + ratings + hosts + favorites + equipments + documents + documentActivity +
+    // connections + coaches + coachSettings + coachActivity + attachments + amenities + activities +
+    // reviews + service + spaceActivity + spaceAmenity + spaces + userActivity + videos
     /**
      * @param ApiTester $I
      * @throws Exception
@@ -95,15 +98,15 @@ class usersCest
         ];
 
         $I->saveUser([
-            $data['email'], ' ',
-            $data['firstName'], ' ',
-            $data['lastName'], ' ',
-            $data['password'], ' ',
-            $data['pin'], ' ',
-            $data['dateOfBirth'], ' ',
-            $data['defaultZip'], ' ',
-            $data['phoneNumber']
-        ], 'user.txt');
+        $data['email'], ' ',
+        $data['firstName'], ' ',
+        $data['lastName'], ' ',
+        $data['password'], ' ',
+        $data['pin'], ' ',
+        $data['dateOfBirth'], ' ',
+        $data['defaultZip'], ' ',
+        $data['phoneNumber']
+    ], 'user.txt');
         $I->sendPOST($this->route, $data);
         $I->seeResponseCodeIs(201);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
@@ -309,7 +312,7 @@ class usersCest
         $user = $I->getUserDataByPin('user.txt');
         var_dump($user);
 //        $I->loginAs($user['email'], $user['password']);
-        $I->loginPin($user['email'], $user['pin']);
+        $I->loginPin($user['userID'], $user['pin']);
         $I->seeResponseCodeIs(200);
     }
 
@@ -321,7 +324,7 @@ class usersCest
     {
         $user = $I->getUserDataByPin('user.txt');
         var_dump($user);
-        $I->loginAs($user['email'], $user['password']);
+        $I->loginAs($user['userID'], $user['password']);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->setRoute('/'.$this->userID[0].'/confirm-email');
         $I->sendPOST($this->route,
@@ -339,7 +342,7 @@ class usersCest
     public function sendPostConfirmPhone(ApiTester $I)
     {
         $user = $I->getUserDataByPin('user.txt');
-        $I->loginAs($user['email'], $user['password']);
+        $I->loginAs($user['userID'], $user['password']);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->setRoute('/'.$this->userID[0].'/confirm-email');
         $I->sendPOST($this->route,
@@ -352,7 +355,7 @@ class usersCest
     public function sendPostReSendConfirmEmail(ApiTester $I)
     {
         $user = $I->getUserDataByPin('user.txt');
-        $I->loginAs($user['email'], $user['password']);
+        $I->loginAs($user['userID'], $user['password']);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->setRoute('/'.$this->userID[0].'/confirm-email');
         $I->sendPOST($this->route);
@@ -364,7 +367,7 @@ class usersCest
     public function sendPostReSendConfirmPhone(ApiTester $I)
     {
         $user = $I->getUserDataByPin('user.txt');
-        $I->loginAs($user['email'], $user['password']);
+        $I->loginAs($user['userID'], $user['password']);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->setRoute('/'.$this->userID[0].'/confirm-phone');
         $I->sendPOST($this->route);
@@ -382,7 +385,7 @@ class usersCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-----------------------Password Strength------------------------//
+    //----------------------- Password Strength------------------------//
 
     public function sendGetPasswordStrength(ApiTester $I)
     {

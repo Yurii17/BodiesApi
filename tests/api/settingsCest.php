@@ -7,7 +7,6 @@ class settingsCest
     public $route = '/sessionSettings';
     public $userID;
 
-
     private function setRoute($params)
     {
         return $this->route = '/sessionSettings'.$params;
@@ -22,49 +21,61 @@ class settingsCest
         $I->loginAs("yurii.lobas+0badbae683b2c6ff5a14bfe90dcfef6d@gmail.com", "6bfAC<kkThESw2");
     }
 
-
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //----------------Add new session settings-----------------------//
+    //---------------- Send Post Add New Session Settings  ----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
-    public function sendPostAddNewSessionSettings(ApiTester $I)
+    public function sendPostAddNewSessionSettingsValid(ApiTester $I)
     {
         $data = [
-            "type" => "private", //fake::create()->randomNumber(2,true)
-            "favorites" => "1",
-            "distance" => "2",
-            "spend" => "10",
-            "atHome" => "0"
+            'type' => 'private',
+            'participantsMax' => fake::create()->randomNumber(3),
+            'distance' => fake::create()->randomNumber(2),
+            'spend' => fake::create()->randomNumber(2),
+            'atHome' => fake::create()->randomNumber(1),
+            'backgroundCheck' => fake::create()->randomNumber(2),
+            'userId' => fake::create()->randomNumber(2)
         ];
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
-    //-------------Edit session settings----------------------//
+    public function sendPostAddNewSessionSettingsError(ApiTester $I)
+    {
+        $data = [
+            'type' => 'private', //fake::create()->randomNumber(2,true)
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([
+            'name' => 'Forbidden',
+            'message' => 'Access denied'
+        ]);
+    }
+
+    //-------------  Send Put Edit Session settings  --------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendPutEditSessionSettings(ApiTester $I)
     {
-        $this->userID = 3;
         $data = [
-            "type" => "private", //fake::create()->randomNumber(2,true)
-            "favorites" => "1",
-            "distance" => fake::create()->randomNumber(2,true),
-            "spend" => "10",
-            "atHome" => "0"
+            'type' => 'private',
+            'participantsMax' => fake::create()->randomNumber(3),
+            'distance' => fake::create()->randomNumber(2),
+            'spend' => fake::create()->randomNumber(2),
+            'atHome' => fake::create()->randomNumber(1),
+            'backgroundCheck' => fake::create()->randomNumber(2),
+//            'userId' => fake::create()->randomNumber(2)
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------Listing of sessions settings-----------------//
+    //-------------- Send Get Listing of sessions settings-----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -82,15 +93,7 @@ class settingsCest
      */
     public function sendGetShowSessionSettingsByID(ApiTester $I)
     {
-        $this->userID = 3;
-        $data = [
-            "type" => "private", //fake::create()->randomNumber(2,true)
-            "favorites" => '1',
-            "distance" => '50',
-            "spend" => '10',
-            "atHome" => '0'
-        ];
-        $I->sendGET($this->route.'/'.$this->userID, $data);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -101,8 +104,7 @@ class settingsCest
      */
     public function sendDeleteSessionSettingsByID(ApiTester $I)
     {
-        $this->userID = 28;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

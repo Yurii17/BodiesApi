@@ -35,7 +35,6 @@ class ApiTester extends \Codeception\Actor
     * Define custom actions here
     */
 
-
    public function removeAuthToken()
    {
        $this->deleteHeader('Authorization');
@@ -46,7 +45,6 @@ class ApiTester extends \Codeception\Actor
        $this->seeResponseCodeIs(405);
        $this->seeResponseContainsJson($message);
    }
-
 
    public function seeForbiddenErrorMessage($message)
    {
@@ -197,10 +195,10 @@ class ApiTester extends \Codeception\Actor
     public function loginPin($userID, $pin)
     {
         $this->sendPOST('/users/login/by-pin', [
-            "identity" => $userID,
-            "secret" => $pin
+            'identity' => $userID,
+            'secret' => $pin
         ]);
-        $token = $this->grabDataFromResponseByJsonPath('$.token'); // [data : ['token': 21312321]]
+        $token = $this->grabDataFromResponseByJsonPath('$.token');
         $this->amBearerAuthenticated($token[0]);
     }
 

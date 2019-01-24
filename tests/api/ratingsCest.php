@@ -20,33 +20,37 @@ class ratingsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-
     //-------------- Send Post Create new Ratings ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostCreateNewRatings(ApiTester $I)
     {
         $data = [
-            'id' => 1,
-            'userId' => 2,
-            'entityClass' => 'host',
-            'entityId' => 2,
-            'value' => fake::create()->randomNumber(2)
+            'entityClass' => 'training',
+            'entityId' => '1'.fake::create()->randomNumber(2),
+            'value' => '1'.fake::create()->randomNumber(2)
         ];
+        $I->saveUserRatings([
+            $data['entityClass'], ' ',
+            $data['entityId'], ' ',
+            $data['value'], ' '
+        ], 'userRatings.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
     //-------------- Send Get Show Ratings By ID ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetShowRatingsById(ApiTester $I)
     {
-        $this->userID = 3;
-        $I->sendGET($this->route.'/'.$this->userID);
-        $I->seeResponseContainsJson([
-            'id' => 3,
-            'userId' => 2,
-            'entityClass' => 'host',
-            'entityId' => 2,
-            'value' => 5
-        ]);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -60,22 +64,37 @@ class ratingsCest
     //-------------- Send Put Modify Ratings By ID ---------//
     public function sendPutModifyRatingsById(ApiTester $I)
     {
-        $this->userID = 1;
         $data = [
             'entityClass' => 'host',
             'entityId' => 2,
             'value' => fake::create()->randomNumber(2)
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------- Create Ratings By ID ---------//
+    //-------------- Send Delete Ratings By ID ---------//
     public function sendDeleteRatingsByID(ApiTester $I)
     {
-        $this->userID = 4;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
+    }
+
+    //-------------- Send Post Create Same Ratings Error  ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
+    public function sendPostCreateSameRatingsError(ApiTester $I)
+    {
+        $data = [
+            'entityClass' => 'training',
+            'entityId' => 10,
+            'value' => 10
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
     }
 
 

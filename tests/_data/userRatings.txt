@@ -1,1 +1,1 @@
-training 128 145 
+training 2 3 

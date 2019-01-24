@@ -30,8 +30,8 @@ class ratingsCest
     {
         $data = [
             'entityClass' => 'training',
-            'entityId' => '1'.fake::create()->randomNumber(2),
-            'value' => '1'.fake::create()->randomNumber(2)
+            'entityId' => fake::create()->randomNumber(1),
+            'value' => fake::create()->numberBetween(1,5)
         ];
         $I->saveUserRatings([
             $data['entityClass'], ' ',
@@ -55,6 +55,10 @@ class ratingsCest
     }
 
     //-------------- Send Get Listing Ratings ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetListingRatings(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -62,18 +66,26 @@ class ratingsCest
     }
 
     //-------------- Send Put Modify Ratings By ID ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPutModifyRatingsById(ApiTester $I)
     {
         $data = [
             'entityClass' => 'host',
             'entityId' => 2,
-            'value' => fake::create()->randomNumber(2)
+            'value' => fake::create()->numberBetween(1, 5)
         ];
         $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
     //-------------- Send Delete Ratings By ID ---------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendDeleteRatingsByID(ApiTester $I)
     {
         $I->sendDELETE($this->route.'/'.$this->userID[0]);

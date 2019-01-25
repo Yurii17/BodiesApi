@@ -6,6 +6,8 @@ class sessionsCest
 {
     public $route = '/sessions';
     public $userID;
+    public $sessionIds;
+    public $trainingIds;
 
     private function setRoute($params)
     {
@@ -65,12 +67,12 @@ class sessionsCest
         ]);
     }
 
-    //------------  Send Put Edit Session  ------------------//
+    //------------  Send Put Edit Session By ID  ------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendPutEditSession(ApiTester $I)
+    public function sendPutEditSessionById(ApiTester $I)
     {
         $data = [
             "price" => 100,
@@ -98,21 +100,11 @@ class sessionsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------  Send Get Show Session   ---------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetShowSession(ApiTester $I)
-    {
-        $I->sendGet($this->route.'/'.$this->userID[0]);
-        $I->seeResponseCodeIs(200);
-    }
-
     //-------------- Send Post Create Trainings by Session ID   ------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateTrainingsBySessionID(ApiTester $I)
     {
@@ -127,23 +119,23 @@ class sessionsCest
             'participantsCurrent '=> 1,
             'startDatetime' => '2018-12-12 12:00:00',
             'endDatetime' => '2018-12-12 13:00:00',
-            'spaceId' => [
-                'id' => 15
-            ],
+            'spaceId' => 15,
             'participantsCurrent' => 1,
             'start' => [
-                '2018-12-12 12:00:00',
-                '2018-12-13 12:00:00',
-                '2018-12-14 12:00:00'
+                '2019-02-01 10:00:00',
+                '2019-02-02 10:00:00',
+                '2019-02-03 10:00:00'
             ],
             'end' => [
-                '2018-12-12 13:00:00',
-                '2018-12-13 13:50:00',
-                '2018-12-14 13:00:00'
+                '2019-02-01 12:00:00',
+                '2019-02-02 12:00:00',
+                '2019-02-03 12:00:00'
             ]
         ];
         $I->sendPOST($this->route.'/'.$this->userID[0].'/trainings', $data);
         $I->seeResponseCodeIs(200);
+        $this->sessionIds = $I->grabDataFromResponseByJsonPath('$.[*].session.id');
+        $this->trainingIds = $I->grabDataFromResponseByJsonPath('$[*].id');
     }
 
     //------------  Send Put Update Trainings by Session ID   -------------//
@@ -154,26 +146,32 @@ class sessionsCest
     public function sendPutUpdateTrainingsBySessionId(ApiTester $I)
     {
         $data = [
-            'spaceId' => [
-                'id' => 15
-            ],
+            'spaceId' => 15,
             'participantsCurrent' => 1,
             'start' => [
-                '2018-12-12 12:00:00',
-                '2018-12-13 12:00:00',
-                '2018-12-14 12:00:00'
+                '2019-02-01 12:00:00',
+                '2019-02-02 12:00:00',
+                '2019-02-03 12:00:00'
             ],
             'end' => [
-                '2018-12-12 13:00:00',
-                '2018-12-13 13:00:00',
-                '2018-12-14 13:00:00'
+                '2019-02-01 14:00:00',
+                '2019-02-02 14:00:00',
+                '2019-02-03 14:00:00'
             ],
-            'trainingIds' => [
-                1,
-                2,
-                3
-        ]];
+            'trainingIds' => [$this->trainingIds[0]]
+        ];
         $I->sendPUT($this->route.'/'.$this->userID[0].'/trainings', $data);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------  Send Get Show Session By ID ---------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetShowSessionById(ApiTester $I)
+    {
+        $I->sendGet($this->route.'/'.$this->sessionIds[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -184,19 +182,8 @@ class sessionsCest
      */
     public function sendGetListingOfTrainingsBySessionID(ApiTester $I)
     {
-        $I->sendGet($this->route.'/'.$this->userID[0].'/trainings');
+        $I->sendGet($this->route.'/'.$this->sessionIds[0].'/trainings');
         $I->seeResponseCodeIs(200);
-    }
-
-    //-------------   Send Delete Session By Id --------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendDeleteSessionById(ApiTester $I)
-    {
-        $I->sendDELETE($this->route.'/'.$this->userID[0]);
-        $I->seeResponseCodeIs(204);
     }
 
     //-------------- Send Delete trainings by Session ID  -----------------//
@@ -206,7 +193,7 @@ class sessionsCest
      */
     public function sendDeleteTrainingsBySessionId(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0].'/trainings');
+        $I->sendDELETE($this->route.'/'.$this->trainingIds[0].'/trainings');
         $I->seeResponseCodeIs(204);
     }
 
@@ -234,7 +221,7 @@ class sessionsCest
                 fake::create()->randomNumber(1,true),
                 fake::create()->randomNumber(1,true)
         ]];
-        $I->sendPOST($this->route.'/'.$this->userID[0].'/activities', $data);
+        $I->sendPOST($this->route.'/'.$this->sessionIds[0].'/activities', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -251,7 +238,7 @@ class sessionsCest
                 fake::create()->randomNumber(1,true),
                 fake::create()->randomNumber(1,true)
             ]];
-        $I->sendPUT($this->route.'/'.$this->userID[0].'/activities', $data);
+        $I->sendPUT($this->route.'/'.$this->sessionIds[0].'/activities', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -262,7 +249,7 @@ class sessionsCest
      */
     public function sendDeleteActivitiesBySessionID(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0].'/activities');
+        $I->sendDELETE($this->route.'/'.$this->sessionIds[0].'/activities');
         $I->seeResponseCodeIs(204);
     }
 
@@ -273,7 +260,7 @@ class sessionsCest
      */
     public function sendGetListingOfCoachesBySessionID(ApiTester $I)
     {
-        $I->sendGET($this->route.'/'.$this->userID[0].'/coaches');
+        $I->sendGET($this->route.'/'.$this->sessionIds[0].'/coaches');
         $I->seeResponseCodeIs(200);
     }
 
@@ -287,9 +274,9 @@ class sessionsCest
         $data = [
             "coach" => [
                 fake::create()->randomNumber(1,true)],
-            'userId' => 1
+            'userId' => $this->userID[0]
         ];
-        $I->sendPOST($this->route.'/'.$this->userID[0].'/coaches', $data);
+        $I->sendPOST($this->route.'/'.$this->sessionIds[0].'/coaches', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -306,7 +293,7 @@ class sessionsCest
                 fake::create()->randomNumber(1,true),
                 fake::create()->randomNumber(1,true)
             ]];
-        $I->sendPUT($this->route.'/'.$this->userID[0].'/coaches', $data);
+        $I->sendPUT($this->route.'/'.$this->sessionIds[0].'/coaches', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -317,9 +304,25 @@ class sessionsCest
      */
     public function sendDeleteCoachBySessionID(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0].'/coaches');
+        $I->sendDELETE($this->route.'/'.$this->sessionIds[0].'/coaches');
         $I->seeResponseCodeIs(204);
     }
+
+    //-------------   Send Delete Session By Id --------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendDeleteSessionById(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->sessionIds[0]);
+        $I->seeResponseCodeIs(204);
+    }
+
+
+
+
+
 
 
 

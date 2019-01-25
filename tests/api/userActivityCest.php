@@ -31,33 +31,39 @@ class userActivityCest
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostAssignActivityToUserBySignIn(ApiTester $I)
     {
         $data = [
             'userId' => 1,
-            'activityId' => 2
+            'activityId' => 1
         ];
+        $I->saveUserActivities([
+           $data['userId'], ' ',
+           $data['activityId'], ' '
+        ],'userActivities.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
-    public function sendPostAssignActivityToUser(ApiTester $I)
+    //-------------  Send Post Assign Activity Error ----------------//
+    public function sendPostAssignActivityToUserError(ApiTester $I)
     {
         $data = [
             'userId' => 1,
-            'activityId' => fake::create()->randomNumber(1)
+            'activityId' => 123
         ];
         $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(201);
+        $I->seeErrorMessage([]);
     }
 
 
     //--------------- Send Delete user activity BY ID ----------//
     public function sendDeleteUserActivityById(ApiTester $I)
     {
-        $this->userID = 2;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

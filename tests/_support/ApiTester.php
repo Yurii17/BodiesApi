@@ -231,6 +231,30 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveCoaches(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getCoachesData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'userId' => $data[0],
+            'description' => $data[1],
+            'inHouse' => $data[3],
+            'gender' => $data[4],
+            'websiteName' => $data[5],
+            'website' => $data[6],
+            'twitter' => $data[7],
+            'instagram' => $data[8],
+            'linkedin' => $data[9],
+            'facebook' => $data[10]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

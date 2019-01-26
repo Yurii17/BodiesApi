@@ -47,14 +47,14 @@ class activitiesCest
             'fullDesc' => fake::create()->text(10),
             'isCertRequired' => 1
         ];
-        $I->saveUserActivity([
+        $I->saveActivities([
             $data['name'], ' ',
             $data['code'], ' ',
             $data['status'], ' ',
             $data['shortDesc'], ' ',
             $data['fullDesc'], ' ',
             $data['isCertRequired'], ' '
-        ], 'userActivity.txt');
+        ], 'activities.txt');
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->token = $I->grabDataFromResponseByJsonPath('$.token');

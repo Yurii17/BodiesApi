@@ -9,6 +9,7 @@ class usersCest
     public $token;
     public $userPhone;
 
+    // http://bodies-api.george.dev.ergonized.com
     // user + auth + sessions + cards + address + locations + workouts + settings + photo + billing +
     // messages + notifications + ratings + hosts + favorites + equipments + documents + documentActivity +
     // connections + coaches + coachSettings + coachActivity + attachments + amenities + activities +
@@ -92,7 +93,7 @@ class usersCest
             'email' => 'yurii.lobas+'.fake::create()->md5.'@gmail.com',
             'firstName' => fake::create()->firstName,
             'lastName' => fake::create()->lastName,
-            'password' => fake::create()->password(7, 16),
+            'password' => '!pass'.fake::create()->randomNumber(5, true),
             'pin' => fake::create()->randomNumber(4, true),
             'dateOfBirth' => fake::create()->date("2000-01-09"),
             'defaultZip' => fake::create()->randomNumber(6,true),
@@ -113,6 +114,22 @@ class usersCest
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->token = $I->grabDataFromResponseByJsonPath('$.token');
         $this->userPhone = $I->grabDataFromResponseByJsonPath('$.phoneNumber');
+    }
+
+    //------------  Send Put Update Password By User Valid  ----------------------//
+    /**
+     * @param ApiTester $I
+     */
+    public function sendPutUpdatePasswordByUserValid(ApiTester $I)
+    {
+        $user = $I->getUserData('user.txt');
+        $data = [
+            'currentPassword' => $user['password'],
+            'password' => '!0password',
+            'confirmPassword' => '!0password'
+        ];
+        $I->sendPUT($this->route.'/'.$this->userID[0].'/password', $data);
+        $I->seeResponseCodeIs(200);
     }
 
     //-------------  Send Post Email Error  -------------//
@@ -194,12 +211,12 @@ class usersCest
     {
         $data = [
             'email' => 'test1312@example.com',
-            'password' => '%ty*<yWwR',
+            'password' => '111111111',
         ];
         $I->sendPOST($this->route, $data);
         $I->seeErrorMessage([
             'field' => 'password',
-            'message' => 'Password too weak, it must contains letters(upper and lower cased), digits and special chars'
+            'message' => 'Password should contain at least 10 characters.'
         ]);
     }
 
@@ -312,7 +329,6 @@ class usersCest
         ]);
     }
 
-
     //----------------  Send Post Confirm email  ---------------------//
     /**
      * @param ApiTester $I
@@ -326,15 +342,15 @@ class usersCest
         $I->sendPOST($this->route.'/'.$this->userID[0].'/confirm-email', $data);
     }
 
-    //---------------   Send Get Confirm Email --------------------//
-    /**
-     * @param ApiTester $I
-     * @throws Exception
-     */
-    public function sendGetConfirmEmail(ApiTester $I)
-    {
-        $I->seeMethodNotAllowed();
-    }
+//    //---------------   Send Get Confirm Email --------------------//
+//    /**
+//     * @param ApiTester $I
+//     * @throws Exception
+//     */
+//    public function sendGetConfirmEmail(ApiTester $I)
+//    {
+//        $I->seeMethodNotAllowed();
+//    }
 
     //--------------   Send Post Confirm Phone Valid ---------------//
 
@@ -390,6 +406,7 @@ class usersCest
     //---------------  Send Get Current User Info -------------------------//
     /**
      * @param ApiTester $I
+     * @before signInByPassword
      * @throws Exception
      */
     public function sendGetCurrentUserInfo(ApiTester $I)
@@ -411,21 +428,6 @@ class usersCest
             'password' => $user['password'],
         ];
         $I->sendGet($this->route.'/login/password-strength', $data);
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------  Send Post Set Random Password Valid ----------------------//
-    /**
-     * @param ApiTester $I
-     * @throws Exception
-     */
-    public function sendPostSetRandomPasswordValid(ApiTester $I)
-    {
-        $user = $I->getUserData('user.txt');
-        $data = [
-            'email' => $user['email']
-        ];
-        $I->sendPOST($this->route.'/set-random', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -476,7 +478,7 @@ class usersCest
             'password' => $user['password'],
             'token' => $this->token[0]
         ];
-        $I->sendPOST($this->route.'/'.$this->userID[0].'/set-password', $data);
+        $I->sendPOST($this->route.'/'.$this->userID[0].'/password', $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -505,6 +507,17 @@ class usersCest
         ]);
     }
 
+    //------------  Send Delete User By Id --------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
+    public function sendDeleteUserByID(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->seeResponseCodeIs(204);
+    }
 
 
 

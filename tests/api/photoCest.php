@@ -21,11 +21,7 @@ class photoCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //-----------------Upload new photo------------------------//
+    //--------------- Send Post Upload New Photo   ---------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -73,7 +69,7 @@ class photoCest
      */
     public function sendGetShowPhotosById(ApiTester $I)
     {
-        $this->userID = 1;
+        $this->userID = 30;
         $I->sendGET($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(200);
     }
@@ -85,7 +81,7 @@ class photoCest
      */
     public function sendDeletePhotos(ApiTester $I)
     {
-        $this->userID = 47;
+        $this->userID = 1;
         $I->sendDELETE($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(204);
     }

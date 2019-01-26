@@ -20,25 +20,17 @@ class connectionsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //------------- Send Get Listing of connections -------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
+    //------------- Send Get Listing of Connections -------------------//
     public function sendGetListingOfConnections(ApiTester $I)
     {
         $I->sendGET($this->route);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Post Create new connection -------------------//
+    //------------- Send Post Create New Connection -------------------//
     /**
      * @param ApiTester $I
-     * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateNewConnection(ApiTester $I)
     {
@@ -48,19 +40,21 @@ class connectionsCest
             "type" => "website",
             "value" => "www.ergonized.com",
         ];
+        $I->saveConnections([
+            $data['entityClass'], ' ',
+            $data['entityId'], ' ',
+            $data['type'], ' ',
+            $data['value'], ' '
+        ],'connections.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
     //------------- Send Get Show connection By Id -------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
     public function sendGetShowConnectionByID(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -71,26 +65,20 @@ class connectionsCest
      */
     public function sendPutModifyConnectionByID(ApiTester $I)
     {
-        $this->userID = 22;
         $data = [
             "entityClass" => "location",
             "entityId" => 2,
             "type" => "website",
             "value" => "www.ergonized.com",
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
     //------------- Send Delete Connection By Id -------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
     public function sendDeleteConnectionByID(ApiTester $I)
     {
-        $this->userID = 22;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

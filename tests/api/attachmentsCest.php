@@ -21,11 +21,8 @@ class attachmentsCest
     {
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
-    public function _before(ApiTester $I)
-    {
-    }
 
-    //-------------- Upload new attachment -----------------------//
+    //-------------- Send Post Upload New Attachment -----------------------//
     /**
      * @param ApiTester $I
      * @throws Exception
@@ -75,8 +72,7 @@ class attachmentsCest
      */
     public function sendGetShowAttachmentsById(ApiTester $I)
     {
-        $this->userID = 64;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -87,8 +83,7 @@ class attachmentsCest
      */
     public function sendDeleteAttachmentsById(ApiTester $I)
     {
-        $this->userID = 64;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

@@ -20,19 +20,16 @@ class coachesCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //------------- Send Post Add new coach -----------------//
+    //------------- Send Post Add new Coaches -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
-    public function sendPostAddNewCoach(ApiTester $I)
+    public function sendPostAddNewCoaches(ApiTester $I)
     {
         $data = [
-            "expireAt" => "2019-12-10 12:00:00",
+            "userId" => "1",
             "description" => fake::create()->text(20),
             "inHouse" => 1,
             "gender" => "male",
@@ -43,8 +40,49 @@ class coachesCest
             "linkedin" => "http://linkedin.com",
             "facebook" => "http://facebook.com"
         ];
+        $I->saveCoaches([
+            $data['userId'], ' ',
+            $data['description'], ' ',
+            $data['inHouse'], ' ',
+            $data['gender'], ' ',
+            $data['websiteName'], ' ',
+            $data['website'], ' ',
+            $data['twitter'], ' ',
+            $data['instagram'], ' ',
+            $data['linkedin'], ' ',
+            $data['facebook'], ' '
+        ], 'coaches.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
+    }
+
+    //------------- Send Post Add new Coaches Error -----------------//
+    public function sendPostAddNewCoachesError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeResponseCodeIs(403);
+    }
+
+    //------------- Send Post Add new Coaches Empty Error -----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
+    public function sendPostAddNewCoachesEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([[
+            'field' => 'gender',
+            'message' => 'Gender cannot be blank.'], [
+            'field' => 'description',
+            'message' => 'Description cannot be blank.']
+        ]);
     }
 
     //------------- Send Put Edit Coach By ID -----------------//
@@ -54,7 +92,6 @@ class coachesCest
      */
     public function sendPutEditCoach(ApiTester $I)
     {
-        $this->userID = 10;
         $data = [
             "expireAt" => "2019-12-10 12:00:00",
             "description" => 'Test QA',
@@ -67,7 +104,7 @@ class coachesCest
             "linkedin" => "http://linkedin.com",
             "facebook" => "http://facebook.com"
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -78,7 +115,6 @@ class coachesCest
      */
     public function sendGetShowCoachById(ApiTester $I)
     {
-        $this->userID = 10;
         $data = [
             "expireAt" => "2019-12-10 12:00:00",
             "description" => 'Test QA',
@@ -91,11 +127,11 @@ class coachesCest
             "linkedin" => "http://linkedin.com",
             "facebook" => "http://facebook.com"
         ];
-        $I->sendGET($this->route.'/'.$this->userID, $data);
+        $I->sendGET($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Get Listing of coaches -----------------//
+    //------------- Send Get Listing of Coaches -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -106,27 +142,14 @@ class coachesCest
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Delete Coaches By ID -----------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendDeleteOfCoachesByID(ApiTester $I)
-    {
-        $this->userID = 8;
-        $I->sendDELETE($this->route.'/'.$this->userID);
-        $I->seeResponseCodeIs(204);
-    }
-
-    //------------- Send Get Listing of activities by coach ID -----------------//
+    //------------- Send Get Listing of Activities by coach ID -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetListingOfCoachesByCoachID(ApiTester $I)
     {
-        $this->userID = 10;
-        $I->sendGET($this->route.'/'.$this->userID.'/activities');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/activities');
         $I->seeResponseCodeIs(200);
     }
 
@@ -137,20 +160,18 @@ class coachesCest
      */
     public function sendGetListingOfVideosByCoachID(ApiTester $I)
     {
-        $this->userID = 10;
-        $I->sendGET($this->route.'/'.$this->userID.'/videos');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/videos');
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Get Listing of photos by coach ID -----------------//
+    //------------- Send Get Listing of Photos by coach ID -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetListingOfPhotosByCoachID(ApiTester $I)
     {
-        $this->userID = 10;
-        $I->sendGET($this->route.'/'.$this->userID.'/photos');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/photos');
         $I->seeResponseCodeIs(200);
     }
 
@@ -161,9 +182,19 @@ class coachesCest
      */
     public function sendGetListingOfSpacesByCoachID(ApiTester $I)
     {
-        $this->userID = 10;
-        $I->sendGET($this->route.'/'.$this->userID.'/spaces');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/spaces');
         $I->seeResponseCodeIs(200);
+    }
+
+    //------------- Send Delete Coaches By ID -----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendDeleteOfCoachesByID(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->seeResponseCodeIs(204);
     }
 
 

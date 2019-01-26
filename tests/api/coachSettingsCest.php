@@ -133,6 +133,13 @@ class coachSettingsCest
         $I->seeResponseCodeIs(200);
     }
 
+    //------------ Send Delete Coach Settings Error --------//
+    public function sendDeleteCoachesSettingsError(ApiTester $I)
+    {
+        $I->sendGET($this->route.'/'.$this->userID[0]);
+        $I->seeForbiddenErrorMessage([]);
+    }
+
 
 
 

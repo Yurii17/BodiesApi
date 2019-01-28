@@ -1,1 +1,1 @@
-training 9 1 
+training 1 5 

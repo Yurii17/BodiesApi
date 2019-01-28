@@ -20,10 +20,6 @@ class hostsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
     //-------------- Send Post Create new host ---------------//
     public function sendPostCreateNewHost(ApiTester $I)
     {

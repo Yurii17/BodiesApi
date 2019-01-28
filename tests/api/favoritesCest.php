@@ -20,10 +20,6 @@ class favoritesCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
     //-------------- Send Get Listing of favorites -------------------//
     public function sendGetListingOfFavorites(ApiTester $I)
     {
@@ -31,11 +27,11 @@ class favoritesCest
         $I->seeResponseCodeIs(200);
     }
 
-
     //-------------- Send Post Create New favorites -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateNewFavorites(ApiTester $I)
     {
@@ -43,7 +39,12 @@ class favoritesCest
             'entityClass' => 'host',
             'entityId' => fake::create()->randomNumber(2, true)
         ];
+        $I->saveFavorites([
+            $data['entityClass'], ' ',
+            $data['entityId'], ' '
+        ], 'favorites.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -65,12 +66,11 @@ class favoritesCest
      */
     public function sendPutModifyFavoritesById(ApiTester $I)
     {
-        $this->userID = 1;
         $data = [
             'entityClass' => 'host',
             'entityId' => 10,
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -81,14 +81,7 @@ class favoritesCest
      */
     public function sendGetShowFavoritesById(ApiTester $I)
     {
-        $this->userID = 1;
-        $data = [
-            "id" => 1,
-            'entityClass' => 'host',
-            'entityId' => 10,
-        ];
-        $I->sendGET($this->route.'/'.$this->userID);
-        $I->seeResponseContainsJson($data);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -99,12 +92,43 @@ class favoritesCest
      */
     public function sendDeleteFavoritesByID(ApiTester $I)
     {
-        $this->userID = 4;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 
+    //-------------- Send Post Create New favorites UserId Error -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostCreateNewFavoritesUserIdError(ApiTester $I)
+    {
+        $data = [
+            'userId' => 'id'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'userId',
+            'message' => 'User ID must be an integer.'
+        ]);
+    }
 
+    //-------------- Send Post Create New favorites UserId Characters Error -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostCreateNewFavoritesUserIdCharactersError(ApiTester $I)
+    {
+        $data = [
+            'userId' => '@'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'userId',
+            'message' => 'User ID must be an integer.'
+        ]);
+    }
 
 
 

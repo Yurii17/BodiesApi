@@ -308,6 +308,54 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveDocuments(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getDocumentsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'name' => $data[0],
+            'file' => $data[1],
+            'startDate' => $data[2],
+            'expDate' => $data[3],
+            'provider' => $data[4],
+            'number' => $data[5],
+            'contactName' => $data[6],
+            'contactPhone' => $data[7],
+            'contactEmail' => $data[8],
+            'type' => $data[9],
+            'isComAccredited' => $data[10],
+            'createdAt' => $data[11],
+            'modifiedAt' => $data[12]
+        ];
+        return $user;
+    }
+
+    public function saveEquipments(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getEquipmentsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'id' => $data[0],
+            'code' => $data[1],
+            'name' => $data[2],
+            'createdAt' => $data[3],
+            'modifiedAt' => $data[4],
+            'expireAt' => $data[5],
+            'status' => $data[6]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

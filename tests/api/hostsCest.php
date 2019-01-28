@@ -20,7 +20,12 @@ class hostsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    //-------------- Send Post Create new host ---------------//
+    //-------------- Send Post Create new host By Id ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostCreateNewHost(ApiTester $I)
     {
         $data = [
@@ -29,27 +34,14 @@ class hostsCest
             "name" => "Some name",
             "description" => fake::create()->text(25)
         ];
+        $I->saveHosts([
+            $data['userId'], ' ',
+            $data['addressId'], ' ',
+            $data['name'], ' ',
+            $data['description'], ' '
+        ], 'hosts.txt');
         $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(201);
-    }
-
-    //-------------- Send Post Create new host By ID -------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendPostCreateNewHostByID(ApiTester $I)
-    {
-        $data = [
-            'status' => 'New',
-            'reviewId' => fake::create()->randomNumber(2,true),
-            'reviewState' => 1,
-            'userId' =>  fake::create()->randomNumber(2,true),
-            'addressId' => 12,
-            'name' => 'Some name',
-            'description' => fake::create()->text(25)
-        ];
-        $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -60,16 +52,15 @@ class hostsCest
      */
     public function sendPutModifyHostByID(ApiTester $I)
     {
-        $this->userID = 11;
         $data = [
             'status' => fake::create()->text(10),
-            'reviewId' => fake::create()->randomNumber(2,true),
+            'reviewId' => 1,
             'reviewState' => 1,
             'addressId' => 12,
-            'name' => 'Some name',
+            'name' => 'TEST',
             'description' => fake::create()->text(25)
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -87,8 +78,7 @@ class hostsCest
      */
     public function sendGetShowHostByID(ApiTester $I)
     {
-        $this->userID = 11;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -99,13 +89,39 @@ class hostsCest
      */
     public function sendDeleteHostByID(ApiTester $I)
     {
-        $this->userID = 2;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 
+    //-------------- Send Post Create new host Error  -------//
+    public function sendPostCreateNewHostError(ApiTester $I)
+    {
+        $data = [
+            'status' => 'New',
+            'reviewId' => fake::create()->randomNumber(2,true),
+            'reviewState' => 1,
+            'addressId' => 12,
+            'name' => 'Some name',
+            'description' => fake::create()->text(25)
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'userId',
+            'message' => 'User ID cannot be blank.'
+        ]);
+    }
 
-
+    //-------------- Send Post Create new host Empty Error  -------//
+    public function sendPostCreateNewHostEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'userId',
+            'message' => 'User ID cannot be blank.'
+        ]);
+    }
 
 
 

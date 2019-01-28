@@ -20,13 +20,10 @@ class documentsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //------------- Send Post Add New Document----------------------//
+    //------------- Send Post Add New Document  -------------------//
     /**
      * @param ApiTester $I
+     * @throws Exception
      * @before signInByPassword
      */
     public function sendPostAddNewDocument(ApiTester $I)
@@ -46,7 +43,23 @@ class documentsCest
             'createdAt' => '2018-12-18 08:49:11',
             'modifiedAt' => '2018-12-18 08:49:11'
         ];
+        $I->saveDocuments([
+            $data['name'], ' ',
+            $data['file'], ' ',
+            $data['startDate'], ' ',
+            $data['expDate'], ' ',
+            $data['provider'], ' ',
+            $data['number'], ' ',
+            $data['contactName'], ' ',
+            $data['contactPhone'], ' ',
+            $data['contactEmail'], ' ',
+            $data['type'], ' ',
+            $data['isComAccredited'], ' ',
+            $data['createdAt'], ' ',
+            $data['modifiedAt'], ' '
+        ],'documents.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -57,7 +70,6 @@ class documentsCest
      */
     public function sendPutEditDocumentByID(ApiTester $I)
     {
-        $this->userID = 3;
         $data = [
             'name' => 'New Cert',
             'file' => '1',
@@ -73,7 +85,7 @@ class documentsCest
             'createdAt' => '2018-12-18 08:49:11',
             'modifiedAt' => '2018-12-18 08:49:11'
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -84,7 +96,6 @@ class documentsCest
      */
     public function sendGetShowDocumentsByID(ApiTester $I)
     {
-        $this->userID = 8;
         $data = [
             'name' => 'New Cert',
             'file' => '1',
@@ -100,10 +111,9 @@ class documentsCest
             'createdAt' => '2018-12-18 08:49:11',
             'modifiedAt' => '2018-12-18 08:49:11'
         ];
-        $I->sendGET($this->route.'/'.$this->userID, $data);
+        $I->sendGET($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
-
 
     //------------- Send Get Listing of documents ----------------------//
     /**
@@ -123,14 +133,42 @@ class documentsCest
      */
     public function sendDeleteDeleteDocumentByID(ApiTester $I)
     {
-        $this->userID = 3;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 
+    //------------- Send Post Add New Document Error -------------------//
+    public function sendPostAddNewDocumentError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([]);
+    }
 
-
-
+    //------------- Send Post Add New Document Name Error -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostAddNewDocumentNameError(ApiTester $I)
+    {
+        $data = [
+            'name' => fake::create()->randomDigit,
+            'file' => '1',
+            'startDate' => '2018-12-24',
+            'expDate' => fake::create()->date()
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([[
+            'field' => 'number',
+            'message' => 'Number cannot be blank.'], [
+            'field' => 'contactEmail',
+            'message' => 'Contact Email cannot be blank.'], [
+            'field' => 'type',
+            'message' => 'Type cannot be blank.'
+        ]]);
+    }
 
 
 

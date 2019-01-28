@@ -356,6 +356,22 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveFavorites(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getFavoritesData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'entityClass' => $data[0],
+            'entityID' => $data[1],
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

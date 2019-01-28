@@ -390,6 +390,24 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveHosts(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getHostsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'userId' => $data[0],
+            'addressId' => $data[1],
+            'name' => $data[2],
+            'description' => $data[3]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

@@ -372,6 +372,24 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveFeedbacks(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getFeedbacksData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'entityClass' => $data[0],
+            'entityID' => $data[1],
+            'title' => $data[2],
+            'message' => $data[3]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

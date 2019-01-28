@@ -90,6 +90,18 @@ class documentActivityCest
         $I->seeResponseCodeIs(204);
     }
 
+    //--------------  Send Post Add New Document Activity Error ----------------//
+    public function sendPostAddNewDocumentActivityError(ApiTester $I)
+    {
+        $data = [
+            'documentId' => '1',
+            'activityId' => '2',
+            'userId' => 1
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([]);
+    }
+
 
 
 

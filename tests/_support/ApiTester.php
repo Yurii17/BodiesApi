@@ -507,6 +507,73 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveSessions(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getSessionsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'name' => $data[0],
+            'description' => $data[1],
+            'type' => $data[2],
+            'price' => $data[3],
+            'atHome' => $data[4],
+            'isGroup' => $data[5],
+            'participantsMax' => $data[6],
+            'isLevelBeginner' => $data[7],
+            'isLevelIntermediate' => $data[8],
+            'isLevelAdvanced' => $data[9],
+            'trainingIntro' => $data[10],
+            'trainingSingle' => $data[11],
+            'trainingMultiple' => $data[12],
+            'userId' => $data[13],
+            'coachId' => $data[14],
+            'spaceId' => $data[15]
+        ];
+        return $user;
+    }
+
+    public function saveSettings(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getSettingsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'type' => $data[0],
+            'participantsMax' => $data[1],
+            'distance' => $data[2],
+            'spend' => $data[3],
+            'atHome' => $data[4],
+            'backgroundCheck' => $data[5],
+            'userId' =>  $data[6]
+        ];
+        return $user;
+    }
+
+    public function saveSpaceActivity(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getSpaceActivityData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'spaceId' => $data[0],
+            'activityId' => $data[1]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

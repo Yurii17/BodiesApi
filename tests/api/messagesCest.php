@@ -19,12 +19,13 @@ class messagesCest
     {
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
-    public function _before(ApiTester $I)
-    {
-    }
 
     //------------- Send Post Create New Messages ---------------------//
-
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostCreateNewMessagesValid(ApiTester $I)
     {
         $data = [
@@ -34,7 +35,15 @@ class messagesCest
             'category' => 'info',
             'message' => fake::create()->text(20),
         ];
+        $I->saveMessages([
+            $data['senderId'], ' ',
+            $data['recipientId'], ' ',
+            $data['subject'], ' ',
+            $data['category'], ' ',
+            $data['message'], ' '
+        ], 'messages.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -45,7 +54,6 @@ class messagesCest
      */
     public function sendPutModifyMessagesById(ApiTester $I)
     {
-        $this->userID = 1;
         $data = [
             'senderId' => '1',
             'recipientId' => '2',
@@ -53,7 +61,7 @@ class messagesCest
             'category' => 'info',
             'message' => fake::create()->text(20),
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
@@ -64,8 +72,7 @@ class messagesCest
      */
     public function sendGetShowMessagesByID(ApiTester $I)
     {
-        $this->userID = 1;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -76,8 +83,7 @@ class messagesCest
      */
     public function sendDeleteMessagesByID(ApiTester $I)
     {
-        $this->userID = 1;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

@@ -221,7 +221,7 @@ class locationsCest
             'message' => 'User ID cannot be blank.'
         ]);
     }
-    
+
 
 
 

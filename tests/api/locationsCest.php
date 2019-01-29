@@ -5,7 +5,7 @@ use Faker\Factory as fake;
 class locationsCest
 {
     public $route = '/locations';
-    public $locationID;
+    public $userID;
 
     private function setRoute($params)
     {
@@ -21,15 +21,11 @@ class locationsCest
         $I->loginAs("yurii.lobas+0badbae683b2c6ff5a14bfe90dcfef6d@gmail.com", "6bfAC<kkThESw2");
     }
 
-
-    public function _before(ApiTester $I)
-    {
-    }
-
-    //---------------Create new location------------------//
+    //--------------- Send Post Create new location  ---------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateNewLocation(ApiTester $I)
     {
@@ -46,13 +42,28 @@ class locationsCest
             "isTowelService" => 1,
             "isShowers" => 1,
             "isInternet" => 1,
-            "isFreeWifi" =>0
+            "isFreeWifi" => 0
         ];
+        $I->saveLocations([
+            $data['addressId'], ' ',
+            $data['name'], ' ',
+            $data['description'], ' ',
+            $data['logo'], ' ',
+            $data['isLegalOwner'], ' ',
+            $data['type'], ' ',
+            $data['isParking'], ' ',
+            $data['size'], ' ',
+            $data['isTowelService'], ' ',
+            $data['isShowers'], ' ',
+            $data['isInternet'], ' ',
+            $data['isFreeWifi'], ' '
+        ], 'locations.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
-    //---------------Index---------------------//
+    //----------- Send Get Index  --------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -63,26 +74,24 @@ class locationsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //---------------Show location by Id---------------------//
+    //------------ Send Get Show location by Id  -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetShowLocationByID(ApiTester $I)
     {
-        $this->locationID = 159;
-        $I->sendGET($this->route.'/'.$this->locationID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
-    //---------------Modify location----------------------------//
+    //------------  Send Put Modify location By Id ----------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendPutModifyLocation(ApiTester $I)
     {
-        $this->locationID = 159;
         $data = [
             "addressId" => fake::create()->randomNumber(2, true),
             "name" => fake::create()->name,
@@ -96,124 +105,123 @@ class locationsCest
             "isTowelService" => 1,
             "isShowers" => 1,
             "isInternet" => 1,
-            "isFreeWifi" =>0
+            "isFreeWifi" => 0
         ];
-        $I->sendPUT($this->route.'/'.$this->locationID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //----------------Delete location----------------//
+    //------------ Send Get List assigned activities By ID --------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendDeleteLocation(ApiTester $I)
+    public function sendGetListAssignedActivitiesById(ApiTester $I)
     {
-        $this->locationID = 163;
-        $I->sendDELETE($this->route.'/'.$this->locationID);
-        $I->seeResponseCodeIs(204);
+        $I->sendGET($this->route.'/'.$this->userID[0].'/activities');
+        $I->seeResponseCodeIs(200);
     }
 
-    //---------------List assigned activities--------------//
+    //------------- Send Get List assigned Spaces By ID  -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListAssignedActivities(ApiTester $I)
+    public function sendGetListAssignedSpacesById(ApiTester $I)
     {
-        $this->locationID = 170;
-        $I->sendGET($this->route.'/'.$this->locationID.'/activities');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/spaces');
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List assigned spaces-----------------//
+    //------------ Send Get List Assigned Connections By ID  --------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListAssignedSpaces(ApiTester $I)
+    public function sendGetListAssignedConnectionsById(ApiTester $I)
     {
-        $this->locationID = 170;
-        $I->sendGET($this->route.'/'.$this->locationID.'/spaces');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/connections');
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List assigned connections-----------------//
+    //------------- Send Get List Assigned Video By Id -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListAssignedConnections(ApiTester $I)
+    public function sendGetListAssignedVideoById(ApiTester $I)
     {
-        $this->locationID = null;
-        $I->sendGET($this->route.'/'.$this->locationID.'/connections');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/videos');
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List assigned video-----------------//
+    //------------- Send Get List Assigned Photo By Id ---------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListAssignedVideo(ApiTester $I)
+    public function sendGetListAssignedPhotoById(ApiTester $I)
     {
-        $this->locationID = null;
-        $I->sendGET($this->route.'/'.$this->locationID.'/videos');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/photos');
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List assigned photo-----------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetListAssignedPhoto(ApiTester $I)
-    {
-        $this->locationID = 170;
-        $I->sendGET($this->route.'/'.$this->locationID.'/photos');
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------Listing of locations for user-----------------//
+    //------------  Send Get Listing of locations for user By ID -------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetListingOfLocationsForUser(ApiTester $I)
     {
-        $this->locationID = 169;
-        $I->sendGET($this->route.'/user/'.$this->locationID);
+        $I->sendGET($this->route.'/user/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List assigned documents-----------------//
+    //-------------- Send Get List Assigned Documents By ID -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListAssignedDocuments(ApiTester $I)
+    public function sendGetListAssignedDocumentsById(ApiTester $I)
     {
-        $this->locationID = 169;
-        $I->sendGET($this->route.'/'.$this->locationID.'/documents');
+        $I->sendGET($this->route.'/'.$this->userID[0].'/documents');
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------List personal locations for user-----------------//
+    //-------------- Send Get List Personal locations for user By ID  ---------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetListPersonalLocationsForUser(ApiTester $I)
+    public function sendGetListPersonalLocationsForUserById(ApiTester $I)
     {
-        $this->locationID = 64;
         $I->sendGET($this->route.'/personal');
         $I->seeResponseCodeIs(200);
     }
 
+    //------------ Send Delete location By Id  --------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendDeleteLocationById(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->seeResponseCodeIs(204);
+    }
 
-
-
-
+    //--------------- Send Post Create new location Error ---------------//
+    public function sendPostCreateNewLocationError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'userId',
+            'message' => 'User ID cannot be blank.'
+        ]);
+    }
+    
 
 
 

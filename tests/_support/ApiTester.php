@@ -435,6 +435,25 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveMessages(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getMessagesData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'senderId' =>  $data[0],
+            'recipientId' =>  $data[1],
+            'subject' =>  $data[2],
+            'category' =>  $data[3],
+            'message' =>  $data[4]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

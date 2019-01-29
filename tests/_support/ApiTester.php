@@ -178,12 +178,12 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
-    public function saveUserRatings(Array $data, $file)
+    public function saveRatings(Array $data, $file)
     {
         file_put_contents(codecept_data_dir($file), $data);
     }
 
-    public function getUserRatingsData($file)
+    public function getRatingsData($file)
     {
         $data = file_get_contents(codecept_data_dir($file));
         $data = explode(' ', $data);
@@ -450,6 +450,25 @@ class ApiTester extends \Codeception\Actor
             'subject' =>  $data[2],
             'category' =>  $data[3],
             'message' =>  $data[4]
+        ];
+        return $user;
+    }
+
+    public function saveNotifications(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getNotificationsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'entityClass' =>  $data[0],
+            'entityId' =>  $data[1],
+            'category' =>  $data[2],
+            'message' =>  $data[3],
+            'userId' => $data[4]
         ];
         return $user;
     }

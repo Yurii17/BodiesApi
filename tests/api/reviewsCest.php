@@ -20,78 +20,124 @@ class reviewsCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    //------------- Send Get Index -------------------//
+    //------------- Send Post Create Reviews -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
+    public function sendPostCreateReviews(ApiTester $I)
+    {
+        $data = [
+            'entityId' => fake::create()->randomNumber(2),
+            'entityClass' => 'host'
+        ];
+        $I->saveReviews([
+            $data['entityId'], ' ',
+            $data['entityClass'], ' '
+        ], 'reviews.txt');
+        $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $I->seeResponseCodeIs(201);
+    }
+
+    //------------- Send Get Index Reviews -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetIndex(ApiTester $I)
+    public function sendGetIndexReviews(ApiTester $I)
     {
         $I->sendGET($this->route);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Get Show By ID -------------------//
+    //------------- Send Get Show Reviews By ID -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendGetShowByID(ApiTester $I)
+    public function sendGetShowReviewsByID(ApiTester $I)
     {
-        $this->userID = 1;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Post Create -------------------//
+    //------------- Send Put Modify Reviews BY ID -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendPostCreate(ApiTester $I)
+    public function sendSendPutModifyReviewsById(ApiTester $I)
     {
         $data = [
             'entityId' => fake::create()->randomNumber(2),
             'entityClass' => 'host'
         ];
-        $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(201);
-    }
-
-    //------------- Send Put Modify BY ID -------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendSendPutModifyById(ApiTester $I)
-    {
-        $this->userID = 1;
-        $data = [
-            'entityId' => fake::create()->randomNumber(2),
-            'entityClass' => 'host'
-        ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
-    //------------- Send Delete By ID -------------------//
+    //------------- Send Delete Reviews By ID -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendDeleteByID(ApiTester $I)
+    public function sendDeleteReviewsByID(ApiTester $I)
     {
-        $this->userID = 3;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 
+    //------------- Send Post Create Reviews Error ---------------//
+    public function sendPostCreateReviewsError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([]);
+    }
 
+    //------------- Send Post Create Reviews Empty Error ---------------//
+    /**
+    * @param ApiTester $I
+    * @before signInByPassword
+    */
+    public function sendPostCreateReviewsEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
 
+    //------------- Send Post Create Reviews EntityId Error ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostCreateReviewsEntityIdError(ApiTester $I)
+    {
+        $data = [
+            'entityId' => '@'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
 
-
-
-
+    //------------- Send Post Create Reviews EntityId Error ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostCreateReviewsEntityClassError(ApiTester $I)
+    {
+        $data = [
+            'entityClass' => '@'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
 
 
 

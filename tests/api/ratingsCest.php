@@ -29,15 +29,15 @@ class ratingsCest
     public function sendPostCreateNewRatings(ApiTester $I)
     {
         $data = [
-            'entityClass' => 'training',
+            'entityClass' => 'host',
             'entityId' => fake::create()->randomNumber(1),
             'value' => fake::create()->numberBetween(1,5)
         ];
-        $I->saveUserRatings([
+        $I->saveRatings([
             $data['entityClass'], ' ',
             $data['entityId'], ' ',
             $data['value'], ' '
-        ], 'userRatings.txt');
+        ], 'ratings.txt');
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
@@ -109,7 +109,14 @@ class ratingsCest
         $I->seeErrorMessage([]);
     }
 
-
+    //-------------- Send Post Create Same Ratings Empty Error  ---------//
+    public function sendPostCreateSameRatingsEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([]);
+    }
 
 
 

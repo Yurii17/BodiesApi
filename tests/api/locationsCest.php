@@ -18,7 +18,7 @@ class locationsCest
      */
     private function signInByPassword(ApiTester $I)
     {
-        $I->loginAs("yurii.lobas+0badbae683b2c6ff5a14bfe90dcfef6d@gmail.com", "6bfAC<kkThESw2");
+        $I->loginAs('yurii.lobas+0badbae683b2c6ff5a14bfe90dcfef6d@gmail.com', '6bfAC<kkThESw2');
     }
 
     //--------------- Send Post Create new location  ---------------//

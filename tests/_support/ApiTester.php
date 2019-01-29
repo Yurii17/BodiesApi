@@ -473,6 +473,24 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveProducts(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getProductsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'sessionId' =>  $data[0],
+            'workoutsQuantity' =>  $data[1],
+            'price' =>  $data[2],
+            'title' =>  $data[3]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

@@ -45,26 +45,31 @@ class sessionsCest
             'trainingIntro' => 1,
             'trainingSingle' => '1',
             'trainingMultiple' => 1,
-            'userId' => 1
+            'userId' => 1,
+            'coachId' => 5,
+            'spaceId' => 17,
         ];
+        $I->saveSessions([
+            $data['name'], ' ',
+            $data['description'], ' ',
+            $data['type'], ' ',
+            $data['price'], ' ',
+            $data['atHome'], ' ',
+            $data['isGroup'], ' ',
+            $data['participantsMax'], ' ',
+            $data['isLevelBeginner'], ' ',
+            $data['isLevelIntermediate'], ' ',
+            $data['isLevelAdvanced'], ' ',
+            $data['trainingIntro'], ' ',
+            $data['trainingSingle'], ' ',
+            $data['trainingMultiple'], ' ',
+            $data['userId'], ' ',
+            $data['coachId'], ' ',
+            $data['spaceId'], ' '
+        ], 'sessions.txt');
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
-    }
-
-    public function sendPostAddNewSessionError(ApiTester $I)
-    {
-        $data = [
-            'price' => 1,
-            'name' => 'Test Session',
-            'description' => 'Test',
-            'type' => 'fit',
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeForbiddenErrorMessage([
-            'name' => 'Forbidden',
-            'message' => 'Access denied'
-        ]);
     }
 
     //------------  Send Put Edit Session By ID  ------------------//
@@ -133,7 +138,7 @@ class sessionsCest
             ]
         ];
         $I->sendPOST($this->route.'/'.$this->userID[0].'/trainings', $data);
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(201);
         $this->sessionIds = $I->grabDataFromResponseByJsonPath('$.[*].session.id');
         $this->trainingIds = $I->grabDataFromResponseByJsonPath('$[*].id');
     }
@@ -222,7 +227,7 @@ class sessionsCest
                 fake::create()->randomNumber(1,true)
         ]];
         $I->sendPOST($this->route.'/'.$this->sessionIds[0].'/activities', $data);
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(201);
     }
 
     //--------------  Send Put Update activities by Session ID  --------------//
@@ -260,7 +265,7 @@ class sessionsCest
      */
     public function sendGetListingOfCoachesBySessionID(ApiTester $I)
     {
-        $I->sendGET($this->route.'/'.$this->sessionIds[0].'/coaches');
+        $I->sendGET('/coaches/'.$this->sessionIds[0].$this->route);
         $I->seeResponseCodeIs(200);
     }
 
@@ -277,7 +282,7 @@ class sessionsCest
             'userId' => $this->userID[0]
         ];
         $I->sendPOST($this->route.'/'.$this->sessionIds[0].'/coaches', $data);
-        $I->seeResponseCodeIs(200);
+        $I->seeResponseCodeIs(201);
     }
 
     //-------------   Send Put Update Coach by Session ID  ---------------//
@@ -319,7 +324,21 @@ class sessionsCest
         $I->seeResponseCodeIs(204);
     }
 
-
+    //------------- Send Post Add New Session Error ---------------//
+    public function sendPostAddNewSessionError(ApiTester $I)
+    {
+        $data = [
+            'price' => 1,
+            'name' => 'Test Session',
+            'description' => 'Test',
+            'type' => 'fit',
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([
+            'name' => 'Forbidden',
+            'message' => 'Access denied'
+        ]);
+    }
 
 
 

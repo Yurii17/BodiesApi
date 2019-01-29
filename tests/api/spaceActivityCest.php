@@ -28,42 +28,47 @@ class spaceActivityCest
     }
 
     //-------------- Send Post of Space Activities  -------------------//
+    /**
+     * @param ApiTester $I
+     * @throws Exception
+     */
     public function sendPostSpaceActivities(ApiTester $I)
     {
         $data = [
             'spaceId' => fake::create()->randomNumber(2),
             'activityId' => 2
         ];
+        $I->saveSpaceActivity([
+            $data['spaceId'], ' ',
+            $data['activityId'], ' '
+        ], 'spaceActivity.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
     //-------------- Send Put Modify of Space Activities By ID  -------------------//
     public function sendPutModifySpaceActivitiesById(ApiTester $I)
     {
-        $this->userID = 5;
         $data = [
             'spaceId' => 1,
             'activityId' => 2
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
-
 
     //-------------- Send Get Space Activities By ID  -------------------//
     public function sendGetSpaceActivities(ApiTester $I)
     {
-        $this->userID = 5;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 
     //-------------- Send Delete of Space Activities BY Id  -------------------//
     public function sendDeleteSpaceActivitiesById(ApiTester $I)
     {
-        $this->userID = 2;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

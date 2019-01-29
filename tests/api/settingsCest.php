@@ -38,6 +38,15 @@ class settingsCest
             'backgroundCheck' => fake::create()->randomNumber(2),
             'userId' => fake::create()->randomNumber(2)
         ];
+        $I->saveSettings([
+            $data['type'], ' ',
+            $data['participantsMax'], ' ',
+            $data['distance'], ' ',
+            $data['spend'], ' ',
+            $data['atHome'], ' ',
+            $data['backgroundCheck'], ' ',
+            $data['userId'], ' '
+        ],'settings.txt');
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
@@ -46,7 +55,7 @@ class settingsCest
     public function sendPostAddNewSessionSettingsError(ApiTester $I)
     {
         $data = [
-            'type' => 'private', //fake::create()->randomNumber(2,true)
+            'type' => 'private'
         ];
         $I->sendPOST($this->route, $data);
         $I->seeForbiddenErrorMessage([
@@ -75,7 +84,7 @@ class settingsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------- Send Get Listing of sessions settings-----------------//
+    //-------------- Send Get Listing of Sessions Settings  -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -86,7 +95,7 @@ class settingsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------Show session settings--------------//
+    //-----------  Send Show Session Settings  --------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -97,7 +106,7 @@ class settingsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------------Delete Session settings By ID---------------------//
+    //-------------- Send Delete Session Settings By ID---------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword

@@ -408,6 +408,33 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function saveLocations(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getLocationsData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'addressId' =>  $data[0],
+            'name' =>  $data[1],
+            'description' =>  $data[2],
+            'logo' =>  $data[3],
+            'isLegalOwner' =>  $data[4],
+            'type' =>  $data[5],
+            'isParking' => $data[6],
+            'size' =>  $data[7],
+            'isBathroom' =>  $data[8],
+            'isTowelService' => $data[9],
+            'isShowers' =>  $data[10],
+            'isInternet' =>  $data[11],
+            'isFreeWifi' => $data[12]
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */

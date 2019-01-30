@@ -39,10 +39,10 @@ class userActivityCest
             'userId' => 1,
             'activityId' => 1
         ];
-        $I->saveUserActivities([
+        $I->saveUserActivity([
            $data['userId'], ' ',
            $data['activityId'], ' '
-        ],'userActivities.txt');
+        ],'userActivity.txt');
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);

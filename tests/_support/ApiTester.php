@@ -617,7 +617,7 @@ class ApiTester extends \Codeception\Actor
         $data = file_get_contents(codecept_data_dir($file));
         $data = explode(' ', $data);
         $user = [
-            'trainingIds' => $data[0],
+            'quantity' => $data[0],
             'sessionId' => $data[1],
         ];
         return $user;

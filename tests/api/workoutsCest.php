@@ -4,77 +4,44 @@ use Faker\Factory as fake;
 
 class workoutsCest
 {
-
     public $route = '/workouts';
-    public $trainingID;
+    public $userID;
 
     private function setRoute($params)
     {
         return $this->route = '/workouts'.$params;
     }
-
     /**
      * @param ApiTester $I
      * @throws Exception
      */
     private function signInByPassword(ApiTester $I)
     {
-        $I->loginAs("yurii.lobas+0badbae683b2c6ff5a14bfe90dcfef6d@gmail.com", "6bfAC<kkThESw2");
+        $I->loginAs('yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com', '8_yry7p>+-[fWg^.');
     }
 
-
-    public function _before(ApiTester $I)
-    {
-    }
-
-
-    //-------------Listing of workouts-----------------//
+    //----------- Send Post Create New workout(s)2  -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
-     */
-    public function sendGetListingOfWorkouts(ApiTester $I)
-    {
-        $I->sendGET($this->route);
-        $I->seeResponseCodeIs(200);
-    }
-
-
-    //-----------Create new workout(s)-----------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendPostCreateNewWorkoutsTrainingIds(ApiTester $I)
-    {
-        $data = [
-            "trainingIds" => [
-                fake::create()->randomNumber(1, true),
-                fake::create()->randomNumber(1, true),
-                fake::create()->randomNumber(1, true)
-        ],
-            "sessionId" => fake::create()->randomNumber(2, true)
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(201);
-    }
-
-    //-----------Create new workout(s)2-----------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateNewWorkoutsQuantity(ApiTester $I)
     {
         $data = [
-            "quantity" => fake::create()->randomNumber(2, true),
-            "sessionId" => fake::create()->randomNumber(2, true)
+            'quantity' => fake::create()->randomNumber(2, true),
+            'sessionId' => fake::create()->randomNumber(2, true),
         ];
+        $I->saveWorkouts([
+            $data['quantity'], ' ',
+            $data['sessionId'], ' ',
+        ],'workouts.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
-    //------------Assign workout to training------------------//
+    //------------ Send Put Assign workout to Training  ------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -89,15 +56,25 @@ class workoutsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //----------------Unasign workout Delete-----------------------//
+    //------------ Send Get Listing of workouts   -------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendDeleteUnasignWorkout(ApiTester $I)
+    public function sendGetListingOfWorkouts(ApiTester $I)
     {
-        $this->trainingID = 24;
-        $I->sendDELETE($this->route.'/'.$this->trainingID);
+        $I->sendGET($this->route);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //------------ Send Delete workout ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendDeleteWorkout(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(200);
     }
 

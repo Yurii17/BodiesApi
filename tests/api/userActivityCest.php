@@ -17,7 +17,7 @@ class userActivityCest
      */
     private function signInByPassword(ApiTester $I)
     {
-        $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
+        $I->loginAs('yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com', '8_yry7p>+-[fWg^.');
     }
 
     //--------------- Send Get Listing of User Activities ----------//

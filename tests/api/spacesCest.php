@@ -30,16 +30,12 @@ class spacesCest
     public function sendPostCreateNewSpaces(ApiTester $I)
     {
         $data = [
-            'createdAt' => fake::create()->randomNumber(2),
-            'userId' => 22,
-            'code' => 'FWF',
+            'locationId' => 206,
             'name' => 'Free wifi',
             'description' => fake::create()->text(20)
         ];
         $I->saveSpaces([
-            $data['createdAt'], ' ',
-            $data['userId'], ' ',
-            $data['code'],  ' ',
+            $data['locationId'], ' ',
             $data['name'], ' ',
             $data['description'], ' '
         ], 'spaces.txt');
@@ -57,64 +53,11 @@ class spacesCest
     public function sendPutModifySpaces(ApiTester $I)
     {
         $data = [
-            'createdAt' => fake::create()->randomNumber(2),
-            'userId' => 1,
-            'code' => 'FWF',
+            'locationId' => 200,
             'name' => 'Free wifi',
             'description' => fake::create()->text(20)
         ];
         $I->sendPUT($this->route.'/'.$this->userID[0], $data);
-        $I->seeResponseCodeIs(200);
-    }
-
-    //----------- Send Get Listing of spaces  ------------//
-    public function sendGetListingOfSpaces(ApiTester $I)
-    {
-        $I->sendGET($this->route);
-        $I->seeResponseCodeIs(200);
-    }
-
-    //----------------- Send Get Show Space By ID ------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetShowSpacesById(ApiTester $I)
-    {
-        $I->sendGET($this->route.'/'.$this->userID[0]);
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------- Send Get List assigned Activities BY Id ---------------//
-    public function sendGetListAssignedActivitiesById(ApiTester $I)
-    {
-        $this->userID = 1;
-        $I->sendGET($this->route.'/'.$this->userID.'/activities');
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------- Send Get List assigned Schedules BY Id ---------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetListAssignedSchedulesById(ApiTester $I)
-    {
-        $I->sendGET($this->route.'/'.$this->userID[0].'/schedules');
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------- Send Get List assigned Video BY Id ---------------//
-    public function sendGetListAssignedVideosById(ApiTester $I)
-    {
-        $I->sendGET($this->route.'/'.$this->userID[0].'/videos');
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------- Send Get List assigned Photos BY Id ---------------//
-    public function sendGetListAssignedPhotosById(ApiTester $I)
-    {
-        $I->sendGET($this->route.'/'.$this->userID[0].'/photos');
         $I->seeResponseCodeIs(200);
     }
 
@@ -128,6 +71,79 @@ class spacesCest
         $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
+
+    //----------- Send Get Listing of spaces  ------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetListingOfSpaces(ApiTester $I)
+    {
+        $I->sendGET($this->route);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //----------------- Send Get Show Space By ID ------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetShowSpacesById(ApiTester $I)
+    {
+        $this->userID = 44;
+        $I->sendGET($this->route.'/'.$this->userID);
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------- Send Get List assigned Activities BY Id ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetListAssignedActivitiesById(ApiTester $I)
+    {
+        $this->userID = 44;
+        $I->sendGET($this->route.'/'.$this->userID.'/activities');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------- Send Get List assigned Schedules BY Id ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetListAssignedSchedulesById(ApiTester $I)
+    {
+        $this->userID = 44;
+        $I->sendGET($this->route.'/'.$this->userID.'/schedules');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------- Send Get List assigned Video BY Id ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetListAssignedVideosById(ApiTester $I)
+    {
+        $this->userID = 44;
+        $I->sendGET($this->route.'/'.$this->userID.'/videos');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------- Send Get List assigned Photos BY Id ---------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetListAssignedPhotosById(ApiTester $I)
+    {
+        $this->userID = 44;
+        $I->sendGET($this->route.'/'.$this->userID.'/photos');
+        $I->seeResponseCodeIs(200);
+    }
+
+
 
 
 

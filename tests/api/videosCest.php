@@ -34,7 +34,7 @@ class videosCest
             'files[]' => 'file source',
         ];
         $path = codecept_data_dir() . 'image';
-        $file = $I->fileData(2, 'png');
+        $file = $I->fileData(1, 'png');
         $I->sendPOST($this->route, $data, [
             'file' => [
                 'name' => $file[0],
@@ -65,7 +65,8 @@ class videosCest
      */
     public function sendDeleteVideosById(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $this->userID = 91;
+        $I->sendDELETE($this->route.'/'.$this->userID);
         $I->seeResponseCodeIs(204);
     }
 

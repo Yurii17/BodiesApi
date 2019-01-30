@@ -29,7 +29,7 @@ class spaceAmenityCest
     public function sendPostCreateNewSpaceAmenity(ApiTester $I)
     {
         $data = [
-            'spaceId' => 1,
+            'spaceId' => 68,
             'amenityId' => 2
         ];
         $I->saveSpaceAmenity([

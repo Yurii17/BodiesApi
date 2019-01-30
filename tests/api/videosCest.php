@@ -65,8 +65,7 @@ class videosCest
      */
     public function sendDeleteVideosById(ApiTester $I)
     {
-        $this->userID = 91;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

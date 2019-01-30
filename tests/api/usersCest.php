@@ -81,8 +81,7 @@ class usersCest
         $I->seeForbiddenErrorMessage(["message" => "Login Required"]);
     }
 
-
-    //------------------------Create new user-------------------------------//
+    //------------- Send Post Create New User  --------------------//
     /**
      * @param ApiTester $I
      * @throws Exception
@@ -519,7 +518,13 @@ class usersCest
         $I->seeResponseCodeIs(204);
     }
 
-
+    //------------  Send Delete User By Id Error ----------------//
+    public function sendDeleteUserByIDError(ApiTester $I)
+    {
+        $this->userID = 220;
+        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->seeForbiddenErrorMessage([]);
+    }
 
 
 

@@ -195,12 +195,12 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
-    public function saveUserActivities(Array $data, $file)
+    public function saveUserActivity(Array $data, $file)
     {
         file_put_contents(codecept_data_dir($file), $data);
     }
 
-    public function getUserActivitiesData($file)
+    public function getUserActivityData($file)
     {
         $data = file_get_contents(codecept_data_dir($file));
         $data = explode(' ', $data);
@@ -570,6 +570,41 @@ class ApiTester extends \Codeception\Actor
         $user = [
             'spaceId' => $data[0],
             'activityId' => $data[1]
+        ];
+        return $user;
+    }
+
+    public function saveSpaceAmenity(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getSpaceAmenityData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'spaceId' => $data[0],
+            'amenityId' => $data[1]
+        ];
+        return $user;
+    }
+
+    public function saveSpaces(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getSpacesData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'createdAt' => $data[0],
+            'userId' => $data[1],
+            'code' => $data[2],
+            'name' => $data[3],
+            'description' => $data[4]
         ];
         return $user;
     }

@@ -24,6 +24,7 @@ class spaceAmenityCest
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostCreateNewSpaceAmenity(ApiTester $I)
     {
@@ -31,23 +32,35 @@ class spaceAmenityCest
             'spaceId' => 1,
             'amenityId' => 2
         ];
+        $I->saveSpaceAmenity([
+            $data['spaceId'], ' ',
+            $data['amenityId'], ' '
+        ],'spaceAmenity.txt');
         $I->sendPOST($this->route, $data);
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
     }
 
     //----------------- Send Put Modify SpaceAmenity BY ID -----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPutModifySpaceAmenityByID(ApiTester $I)
     {
-        $this->userID = 1;
         $data = [
-            'spaceId' => 1,
+            'spaceId' => 2,
             'amenityId' => 2
         ];
-        $I->sendPUT($this->route.'/'.$this->userID, $data);
+        $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
     //----------------- Send Get Show SpaceAmenity -----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetShowSpaceAmenity(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -55,10 +68,13 @@ class spaceAmenityCest
     }
 
     //----------------- Send Delete SpaceAmenity By ID -----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendDeleteSpaceAmenityById(ApiTester $I)
     {
-        $this->userID = 1;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
         $I->seeResponseCodeIs(204);
     }
 

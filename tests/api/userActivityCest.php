@@ -48,18 +48,6 @@ class userActivityCest
         $I->seeResponseCodeIs(201);
     }
 
-    //-------------  Send Post Assign Activity Error ----------------//
-    public function sendPostAssignActivityToUserError(ApiTester $I)
-    {
-        $data = [
-            'userId' => 1,
-            'activityId' => 123
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeErrorMessage([]);
-    }
-
-
     //--------------- Send Delete user activity BY ID ----------//
     public function sendDeleteUserActivityById(ApiTester $I)
     {
@@ -67,7 +55,50 @@ class userActivityCest
         $I->seeResponseCodeIs(204);
     }
 
+    //-------------  Send Post Assign Activity Error ----------------//
+    public function sendPostAssignActivityError(ApiTester $I)
+    {
+        $data = [
+            'userId' => 1,
+            'activityId' => '@'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
 
+    //-------------  Send Post Assign Activity UserId Error ----------------//
+    public function sendPostAssignActivityUserIdError(ApiTester $I)
+    {
+        $data = [
+            'userId' => '@',
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
+
+    //-------------  Send Post Assign Activity ID Error ----------------//
+    public function sendPostAssignActivityIDError(ApiTester $I)
+    {
+        $data = [
+            'activityId' => '@',
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([]);
+    }
+
+    //-------------  Send Post Assign Activity Empty Error ----------------//
+    public function sendPostAssignActivityEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([[
+            'field' => 'userId',
+            'message' => 'User ID cannot be blank.'], [
+            'field' => 'activityId',
+            'message' => 'Activity ID cannot be blank.'
+        ]]);
+    }
 
 
 

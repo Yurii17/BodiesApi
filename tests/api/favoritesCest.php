@@ -21,6 +21,10 @@ class favoritesCest
     }
 
     //-------------- Send Get Listing of favorites -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetListingOfFavorites(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -46,17 +50,6 @@ class favoritesCest
         $I->sendPOST($this->route, $data);
         $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $I->seeResponseCodeIs(201);
-    }
-
-    //-------------- Send Post Create New favorites Error -------------------//
-    public function sendPostCreateNewFavoritesError(ApiTester $I)
-    {
-        $data = [
-            'entityClass' => 'host',
-            'entityId' => fake::create()->randomNumber(2)
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeResponseCodeIs(500);
     }
 
     //-------------- Send Put Modify favorite By ID --------------------//
@@ -96,24 +89,31 @@ class favoritesCest
         $I->seeResponseCodeIs(204);
     }
 
-    //-------------- Send Post Create New favorites UserId Error -------------------//
+    //-------------- Send Get Listing of favorites Forbidden Error -------------------//
+    public function sendGetListingOfFavoritesForbiddenError(ApiTester $I)
+    {
+        $I->sendGET($this->route);
+        $I->seeForbiddenErrorMessage([]);
+    }
+
+    //-------------- Send Post Create New favorites EntityId Error -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendPostCreateNewFavoritesUserIdError(ApiTester $I)
+    public function sendPostCreateNewFavoritesEntityIdError(ApiTester $I)
     {
         $data = [
-            'userId' => 'id'
+            'entityId' => 'id'
         ];
         $I->sendPOST($this->route, $data);
         $I->seeErrorMessage([
-            'field' => 'userId',
-            'message' => 'User ID must be an integer.'
+            'field' => 'entityId',
+            'message' => 'Entity ID must be an integer.'
         ]);
     }
 
-    //-------------- Send Post Create New favorites UserId Characters Error -------------------//
+    //-------------- Send Post Create New favorites EntityId Characters Error -------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -121,19 +121,40 @@ class favoritesCest
     public function sendPostCreateNewFavoritesUserIdCharactersError(ApiTester $I)
     {
         $data = [
-            'userId' => '@'
+            'entityId' => '@'
         ];
         $I->sendPOST($this->route, $data);
         $I->seeErrorMessage([
-            'field' => 'userId',
-            'message' => 'User ID must be an integer.'
+            'field' => 'entityId',
+            'message' => 'Entity ID must be an integer.'
         ]);
     }
 
+    //-------------- Send Post Create New favorites EntityClass Error -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendPostCreateNewFavoritesEntityClassError(ApiTester $I)
+    {
+        $data = [
+            'entityClass' => 'id'
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'entityClass',
+            'message' => 'Entity Class is invalid.'
+        ]);
+    }
 
-
-
-
+    //-------------- Send Post Create New favorites Forbidden Error -------------------//
+    public function sendPostCreateNewFavoritesEmptyError(ApiTester $I)
+    {
+        $data = [
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeForbiddenErrorMessage([]);
+    }
 
 
 

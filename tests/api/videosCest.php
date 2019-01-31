@@ -5,7 +5,7 @@ use Faker\Factory as fake;
 class videosCest
 {
     public $route = '/videos';
-    public $userID;
+    public $videosID;
 
     private function setRoute($params)
     {
@@ -29,7 +29,7 @@ class videosCest
     public function sendPostOfVideosById(ApiTester $I)
     {
         $data = [
-            'entityId' => 1,
+            'entityId' => fake::create()->randomNumber(2),
             'entityClass' => 'user',
             'files[]' => 'file source',
         ];
@@ -43,7 +43,7 @@ class videosCest
                 'tmp_name' => $path . '/' . ($file[0])
             ]
         ]);
-        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->videosID = $I->grabDataFromResponseByJsonPath('$.[*].id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -65,7 +65,7 @@ class videosCest
      */
     public function sendDeleteVideosById(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->sendDELETE($this->route.'/'.$this->videosID[0]);
         $I->seeResponseCodeIs(204);
     }
 

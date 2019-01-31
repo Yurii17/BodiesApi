@@ -6,7 +6,7 @@ use bheller\ImagesGenerator\ImagesGeneratorProvider;
 class attachmentsCest
 {
     public $route = '/attachments';
-    public $userID;
+    public $attachmentsID;
     public $token;
 
     private function setRoute($params)
@@ -50,7 +50,7 @@ class attachmentsCest
                 'tmp_name' => $path . '/' . ($file[1])
             ]
         ]);
-        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->attachmentsID = $I->grabDataFromResponseByJsonPath('$.[*].id');
         $I->seeResponseCodeIs(201);
     }
 
@@ -72,7 +72,7 @@ class attachmentsCest
      */
     public function sendGetShowAttachmentsById(ApiTester $I)
     {
-        $I->sendGET($this->route.'/'.$this->userID[0]);
+        $I->sendGET($this->route.'/'.$this->attachmentsID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -83,7 +83,7 @@ class attachmentsCest
      */
     public function sendDeleteAttachmentsById(ApiTester $I)
     {
-        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->sendDELETE($this->route.'/'.$this->attachmentsID[0]);
         $I->seeResponseCodeIs(204);
     }
 

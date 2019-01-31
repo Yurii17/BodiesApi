@@ -56,7 +56,6 @@ class photoCest
         ], 'photo.txt');
         $I->seeResponseCodeIs(201);
         $this->photoID = $I->grabDataFromResponseByJsonPath('$.[*].id');
-        var_dump($this->photoID);
     }
 
     //-----------  Send Get Listing of Photos  --------------------//

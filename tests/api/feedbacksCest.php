@@ -20,7 +20,11 @@ class feedbacksCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    //-------------- Send Get Listing of feedBacks -------------------//
+    //-------------- Send Get Listing of FeedBacks -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetListingOfFeedBacks(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -102,10 +106,12 @@ class feedbacksCest
             'userId' => 'id'
         ];
         $I->sendPOST($this->route, $data);
-        $I->seeErrorMessage([
-            'field' => 'userId',
-            'message' => 'User ID must be an integer.'
-        ]);
+        $I->seeErrorMessage([[
+            'field' => 'entityId',
+            'message' => 'Entity ID cannot be blank.'], [
+            'field' => 'message',
+            'message' => 'Message cannot be blank.'
+        ]]);
     }
 
     //-------------- Send Post Create New Feedbacks UserId Characters Error -------------------//
@@ -119,13 +125,19 @@ class feedbacksCest
             'userId' => '@'
         ];
         $I->sendPOST($this->route, $data);
-        $I->seeErrorMessage([
-            'field' => 'userId',
-            'message' => 'User ID must be an integer.'
-        ]);
+        $I->seeErrorMessage([[
+            'field' => 'entityId',
+            'message' => 'Entity ID cannot be blank.'], [
+            'field' => 'message',
+            'message' => 'Message cannot be blank.'
+        ]]);
     }
 
     //-------------- Send Post Create New Feedbacks Title Error -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateNewFeedbacksTitleError(ApiTester $I)
     {
         $data = [

@@ -118,18 +118,6 @@ class billingCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------- Delete Card By Id --------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendDeleteCardById(ApiTester $I)
-    {
-        $this->userID = 30;
-        $I->sendDELETE('/users/'.$this->userID.'/cards/'.$this->card_ID[0]);
-        $I->seeResponseCodeIs(204);
-    }
-
     //-------------- Send Get User's Balance By ID ---------------------------------//
     /**
      * @param ApiTester $I
@@ -178,6 +166,17 @@ class billingCest
         ]);
     }
 
+    //-------------- Delete Card By Id --------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendDeleteCardById(ApiTester $I)
+    {
+        $this->userID = 30;
+        $I->sendDELETE('/users/'.$this->userID.'/cards/'.$this->card_ID[0]);
+        $I->seeResponseCodeIs(204);
+    }
 
 
 

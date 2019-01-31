@@ -210,17 +210,6 @@ class locationsCest
         $I->seeResponseCodeIs(204);
     }
 
-    //--------------- Send Post Create new location Error ---------------//
-    public function sendPostCreateNewLocationError(ApiTester $I)
-    {
-        $data = [
-        ];
-        $I->sendPOST($this->route, $data);
-        $I->seeErrorMessage([
-            'field' => 'userId',
-            'message' => 'User ID cannot be blank.'
-        ]);
-    }
 
 
 

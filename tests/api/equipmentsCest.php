@@ -21,7 +21,10 @@ class equipmentsCest
     }
 
     //------------- Send Get Listing of equipments --------------------//
-
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetListingOfEquipments(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -102,6 +105,10 @@ class equipmentsCest
     }
 
     //-------------- Send Post Create new equipment Empty Valid -------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateNewEquipmentEmptyValid(ApiTester $I)
     {
         $data = [
@@ -111,6 +118,10 @@ class equipmentsCest
     }
 
     //-------------- Send Post Create new equipment Name Error -------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateNewEquipmentNameError(ApiTester $I)
     {
         $data = [
@@ -129,6 +140,10 @@ class equipmentsCest
     }
 
     //-------------- Send Post Create new equipment Code Error -------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateNewEquipmentCodeError(ApiTester $I)
     {
         $data = [
@@ -142,6 +157,10 @@ class equipmentsCest
     }
 
     //-------------- Send Post Create new equipment Status Error -------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateNewEquipmentStatusError(ApiTester $I)
     {
         $data = [

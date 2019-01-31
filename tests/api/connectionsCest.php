@@ -21,6 +21,11 @@ class connectionsCest
     }
 
     //------------- Send Get Listing of Connections -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendGetListingOfConnections(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -30,12 +35,13 @@ class connectionsCest
     //------------- Send Post Create New Connection -------------------//
     /**
      * @param ApiTester $I
+     * @before signInByPassword
      * @throws Exception
      */
     public function sendPostCreateNewConnection(ApiTester $I)
     {
         $data = [
-            "entityClass" => "location",
+            "entityClass" => "user",
             "entityId" => 2,
             "type" => "website",
             "value" => "www.ergonized.com",
@@ -52,6 +58,11 @@ class connectionsCest
     }
 
     //------------- Send Get Show connection By Id -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendGetShowConnectionByID(ApiTester $I)
     {
         $I->sendGET($this->route.'/'.$this->userID[0]);
@@ -66,16 +77,21 @@ class connectionsCest
     public function sendPutModifyConnectionByID(ApiTester $I)
     {
         $data = [
-            "entityClass" => "location",
+            "entityClass" => "user",
             "entityId" => 2,
-            "type" => "website",
-            "value" => "www.ergonized.com",
+            "type" => "websiteNumberOne",
+            "value" => "www.locations.com",
         ];
         $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);
     }
 
     //------------- Send Delete Connection By Id -------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendDeleteConnectionByID(ApiTester $I)
     {
         $I->sendDELETE($this->route.'/'.$this->userID[0]);

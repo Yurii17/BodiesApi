@@ -21,6 +21,11 @@ class userActivityCest
     }
 
     //--------------- Send Get Listing of User Activities ----------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendGetListingOfUserActivities(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -49,6 +54,11 @@ class userActivityCest
     }
 
     //--------------- Send Delete user activity BY ID ----------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendDeleteUserActivityById(ApiTester $I)
     {
         $I->sendDELETE($this->route.'/'.$this->userID[0]);
@@ -56,6 +66,11 @@ class userActivityCest
     }
 
     //-------------  Send Post Assign Activity Error ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostAssignActivityError(ApiTester $I)
     {
         $data = [
@@ -67,6 +82,11 @@ class userActivityCest
     }
 
     //-------------  Send Post Assign Activity UserId Error ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostAssignActivityUserIdError(ApiTester $I)
     {
         $data = [
@@ -77,6 +97,11 @@ class userActivityCest
     }
 
     //-------------  Send Post Assign Activity ID Error ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostAssignActivityIDError(ApiTester $I)
     {
         $data = [
@@ -87,6 +112,11 @@ class userActivityCest
     }
 
     //-------------  Send Post Assign Activity Empty Error ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     * @throws Exception
+     */
     public function sendPostAssignActivityEmptyError(ApiTester $I)
     {
         $data = [

@@ -27,6 +27,10 @@ class amenitiesCest
     }
 
     //---------------- Listing of amenities ----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetListingOfAmenities(ApiTester $I)
     {
         $I->sendGET($this->route);
@@ -57,6 +61,7 @@ class amenitiesCest
     //---------------- Send Post Create new amenity Valid ----------------------//
     /**
      * @param ApiTester $I
+     * @before signInByPassword
      * @throws Exception
      */
     public function sendPostCreateNewAmenityValid(ApiTester $I)
@@ -86,6 +91,10 @@ class amenitiesCest
     }
 
     //---------------- Send Put Modify amenity by ID ----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPutModifyAmenity(ApiTester $I)
     {
         $data = [
@@ -97,6 +106,10 @@ class amenitiesCest
     }
 
     //------------------- Send Delete amenity --------------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendDeleteAmenityById(ApiTester $I)
     {
         $I->sendDELETE($this->route.'/'.$this->userID[0]);
@@ -104,6 +117,10 @@ class amenitiesCest
     }
 
     //---------------- Send Post Create Fake Status Amenity Error ----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateFakeStatusAmenityError(ApiTester $I)
     {
         $data = [
@@ -117,6 +134,10 @@ class amenitiesCest
     }
 
     //---------------- Send Post Create Fake Code Amenity Error ----------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateFakeCodeAmenityError(ApiTester $I)
     {
         $data = [

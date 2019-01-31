@@ -18,10 +18,10 @@ class activitiesCest
      */
     private function signInByPassword(ApiTester $I)
     {
-        $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
+        $I->loginAs('yurii.lobas+7336885c314290434c04d4bd3d5fbc54@gmail.com', '!pass76934');
     }
 
-    //--------------Listing of activities------------------------//
+    //------------ Send Get Listing of Activities   -----------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
@@ -32,9 +32,10 @@ class activitiesCest
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------Create new activity-------------------------//
+    //------------ Send Post Create New Activity  ------------------//
     /**
      * @param ApiTester $I
+     * @before signInByPassword
      * @throws Exception
      */
     public function sendPostCreateNewActivities(ApiTester $I)
@@ -62,24 +63,32 @@ class activitiesCest
     }
 
     //----------------- Send Post Create Empty Field Activities Error ---------------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostCreateEmptyFieldActivitiesError(ApiTester $I)
     {
-    $data = [
-        'name' => 'Yoga',
-        'code' => 'YO',
-        'status' => '1',
-        'shortDesc' => 'Yoga is a group of physical, mental, and spiritual practices',
-        'fullDesc' => fake::create()->text(10),
-        'isCertRequired' => ' '
-    ];
-    $I->sendPOST($this->route, $data);
-    $I->seeErrorMessage([
-        'field' => 'isCertRequired',
-        'message' => 'Is Cert Required must be an integer.'
-    ]);
+        $data = [
+            'name' => 'Yoga',
+            'code' => 'YO',
+            'status' => '1',
+            'shortDesc' => 'Yoga is a group of physical, mental, and spiritual practices',
+            'fullDesc' => fake::create()->text(10),
+            'isCertRequired' => ' '
+        ];
+        $I->sendPOST($this->route, $data);
+        $I->seeErrorMessage([
+            'field' => 'isCertRequired',
+            'message' => 'Is Cert Required must be an integer.'
+        ]);
     }
 
     //----------------- Send Post Activities Max Nb Chars Error ---------------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostActivitiesMaxCharsError(ApiTester $I)
     {
         $data = [
@@ -98,6 +107,10 @@ class activitiesCest
     }
 
     //----------------- Send Post Activities Cert Required Error ---------------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendPostActivitiesCertRequiredError(ApiTester $I)
     {
         $data = [
@@ -115,11 +128,11 @@ class activitiesCest
         ]);
     }
 
-    //-------------- Send Show activity by ID -------------------------//
+    //-------------- Send Get Show activity by ID -------------------------//
     /**
      * @param ApiTester $I
      * @throws Exception
-     * @before sendPostCreateNewActivities
+     * @before signInByPassword
      */
     public function sendGetShowActivities(ApiTester $I)
     {
@@ -131,7 +144,7 @@ class activitiesCest
     /**
      * @param ApiTester $I
      * @throws Exception
-     * @before sendPostCreateNewActivities
+     * @before signInByPassword
      */
     public function sendPutModifyActivitiesById(ApiTester $I)
     {
@@ -146,9 +159,10 @@ class activitiesCest
         $I->seeResponseCodeIs(200);
     }
 
-    //------------ Delete activity -------------------------//
+    //------------ Send Delete Activities By ID -------------------------//
     /**
      * @param ApiTester $I
+     * @before signInByPassword
      */
     public function sendDeleteActivitiesByID(ApiTester $I)
     {

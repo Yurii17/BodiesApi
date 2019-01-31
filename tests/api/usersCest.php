@@ -118,6 +118,7 @@ class usersCest
     //------------  Send Put Update Password By User Valid  ----------------------//
     /**
      * @param ApiTester $I
+     * @before SignInByPassword
      */
     public function sendPutUpdatePasswordByUserValid(ApiTester $I)
     {

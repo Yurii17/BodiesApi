@@ -20,14 +20,6 @@ class coachActivityCest
         $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
     }
 
-    //-------------- Send Get Listing of coach activities ------------------//
-
-    public function sendGetListingOfCoachActivities(ApiTester $I)
-    {
-        $I->sendGET($this->route);
-        $I->seeResponseCodeIs(200);
-    }
-
     //----------------- Send Post Assign Activity to coach -------------------//
     /**
      * @param ApiTester $I
@@ -129,6 +121,13 @@ class coachActivityCest
         $I->seeResponseCodeIs(200);
     }
 
+    //-------------- Send Get Show of coach activities Forbidden Error ------------------//
+    public function sendGetListingOfCoachActivitiesForbiddenError(ApiTester $I)
+    {
+        $I->sendGET($this->route);
+        $I->seeForbiddenErrorMessage([]);
+    }
+
     //------------------ Send Put Modify Coach Activity By Id ----------------------------//
     /**
      * @param ApiTester $I
@@ -147,6 +146,11 @@ class coachActivityCest
         $I->seeResponseCodeIs(200);
     }
 
+    //-------------  Send Get Show Modify Coach Activity By Id ----------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
     public function sendGetShowModifyCoachActivityById(ApiTester $I)
     {
         $data = [

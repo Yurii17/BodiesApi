@@ -97,6 +97,13 @@ class notificationsCest
         $I->seeResponseCodeIs(204);
     }
 
+    //-------------- Send Delete Notifications Forbidden Error --------------------//
+    public function sendDeleteNotificationsForbiddenError(ApiTester $I)
+    {
+        $I->sendDELETE($this->route.'/'.$this->userID[0]);
+        $I->seeForbiddenErrorMessage([]);
+    }
+
     //-------------- Send Post Create New Notifications Error --------------------//
     public function sendPostCreateNewNotificationsError(ApiTester $I)
     {

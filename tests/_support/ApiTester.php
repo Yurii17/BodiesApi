@@ -623,6 +623,22 @@ class ApiTester extends \Codeception\Actor
         return $user;
     }
 
+    public function savePhoto(Array $data, $file)
+    {
+        file_put_contents(codecept_data_dir($file), $data);
+    }
+
+    public function getPhotoData($file)
+    {
+        $data = file_get_contents(codecept_data_dir($file));
+        $data = explode(' ', $data);
+        $user = [
+            'entityId' => $data[0],
+            'entityClass' => $data[1],
+        ];
+        return $user;
+    }
+
     /**
      * @throws Exception
      */
@@ -689,27 +705,7 @@ class ApiTester extends \Codeception\Actor
         return $fileData;
     }
 
-    public function _afterSuite()
-    {
-        $path = codecept_data_dir() . 'image';
-        if (!is_dir($path)) {
-            echo "Cannot find $path\n";
-            return false;
-        } else {
-            $rep = strlen($path . '/');
-            $files = glob($path . '/' . "*.png");
-            $fileData = [];
-            foreach ($files as $key) {
-                $file = substr($key, $rep);
-                array_push($fileData, $file);
-            }
-            if (is_array($fileData)) {
-                foreach ($fileData as $key) {
-                    unlink(codecept_data_dir() . 'image/' . $key);
-                }
-            }
-        }
-    }
+
 
 
 

@@ -269,50 +269,6 @@ class sessionsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------- Send Post Create Coach by Session ID  --------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendPostCreateCoachBySessionID(ApiTester $I)
-    {
-        $data = [
-            "coach" => [
-                fake::create()->randomNumber(1,true)],
-            'userId' => $this->userID[0]
-        ];
-        $I->sendPOST($this->route.'/'.$this->sessionIds[0].'/coaches', $data);
-        $I->seeResponseCodeIs(201);
-    }
-
-    //-------------   Send Put Update Coach by Session ID  ---------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendPutUpdateCoachBySessionID (ApiTester $I)
-    {
-        $data = [
-            "coach" => [
-                fake::create()->randomNumber(1,true),
-                fake::create()->randomNumber(1,true),
-                fake::create()->randomNumber(1,true)
-            ]];
-        $I->sendPUT($this->route.'/'.$this->sessionIds[0].'/coaches', $data);
-        $I->seeResponseCodeIs(200);
-    }
-
-    //--------------  Send Delete Coaches by Session ID   --------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendDeleteCoachBySessionID(ApiTester $I)
-    {
-        $I->sendDELETE($this->route.'/'.$this->sessionIds[0].'/coaches');
-        $I->seeResponseCodeIs(204);
-    }
-
     //-------------   Send Delete Session By Id --------------------//
     /**
      * @param ApiTester $I

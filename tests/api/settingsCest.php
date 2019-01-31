@@ -84,16 +84,7 @@ class settingsCest
         $I->seeResponseCodeIs(200);
     }
 
-    //-------------- Send Get Listing of Sessions Settings  -----------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetListingSessionSettings(ApiTester $I)
-    {
-        $I->sendGET($this->route);
-        $I->seeResponseCodeIs(200);
-    }
+
 
     //-----------  Send Show Session Settings  --------------//
     /**

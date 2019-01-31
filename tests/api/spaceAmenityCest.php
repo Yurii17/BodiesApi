@@ -30,7 +30,7 @@ class spaceAmenityCest
     {
         $data = [
             'spaceId' => 68,
-            'amenityId' => 2
+            'amenityId' => 22
         ];
         $I->saveSpaceAmenity([
             $data['spaceId'], ' ',
@@ -50,7 +50,7 @@ class spaceAmenityCest
     {
         $data = [
             'spaceId' => 2,
-            'amenityId' => 2
+            'amenityId' => 22
         ];
         $I->sendPUT($this->route.'/'.$this->userID[0], $data);
         $I->seeResponseCodeIs(200);

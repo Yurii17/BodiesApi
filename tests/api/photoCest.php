@@ -6,6 +6,7 @@ use bheller\ImagesGenerator\ImagesGeneratorProvider;
 class photoCest
 {
     public $route = '/photos';
+    public $photoID;
     public $userID;
 
     private function setRoute($params)
@@ -18,19 +19,20 @@ class photoCest
      */
     private function signInByPassword(ApiTester $I)
     {
-        $I->loginAs("yurii.lobas+e769b642eaa052d122fe4e6359f83f79@gmail.com", "8_yry7p>+-[fWg^.");
+        $I->loginAs('yurii.lobas+7336885c314290434c04d4bd3d5fbc54@gmail.com', '!pass76934');
     }
 
     //--------------- Send Post Upload New Photo   ---------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendPostUploadNewPhotos(ApiTester $I)
     {
         $data = [
-            "entityId" => 1,
-            "entityClass" => "user"
+            'entityId' => faker::create()->randomNumber(2),
+            'entityClass' => 'user'
             ];
         $path = codecept_data_dir() . 'image';
         $file = $I->fileData(2, 'png');
@@ -48,13 +50,20 @@ class photoCest
                 'tmp_name' => $path . '/' . ($file[1])
             ]
         ]);
+        $I->savePhoto([
+            $data['entityId'], ' ',
+            $data['entityClass'], ' '
+        ], 'photo.txt');
         $I->seeResponseCodeIs(201);
+        $this->photoID = $I->grabDataFromResponseByJsonPath('$.[*].id');
+        var_dump($this->photoID);
     }
 
-    //--------------Listing of photos--------------------//
+    //-----------  Send Get Listing of Photos  --------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
+     * @throws Exception
      */
     public function sendGetListingOfPhotos(ApiTester $I)
     {
@@ -62,27 +71,25 @@ class photoCest
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------Show photo By ID--------------------//
+    //------------- Send Get Show photo By ID  --------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
     public function sendGetShowPhotosById(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendGET($this->route.'/'.$this->userID);
+        $I->sendGET($this->route.'/'.$this->photoID[0]);
         $I->seeResponseCodeIs(200);
     }
 
-    //--------------Delete Photo--------------------//
+    //-------------- Send Delete Photo By ID --------------------//
     /**
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendDeletePhotos(ApiTester $I)
+    public function sendDeletePhoto(ApiTester $I)
     {
-        $this->userID = 1;
-        $I->sendDELETE($this->route.'/'.$this->userID);
+        $I->sendDELETE($this->route.'/'.$this->photoID[0]);
         $I->seeResponseCodeIs(204);
     }
 

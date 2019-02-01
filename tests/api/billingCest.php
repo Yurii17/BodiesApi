@@ -39,7 +39,6 @@ class billingCest
             $data['source'], ' '
         ], 'userBilling.txt');
         $I->sendPOST($this->route, $data);
-        $this->userID = $I->grabDataFromResponseByJsonPath('$.id');
         $this->token = $I->grabDataFromResponseByJsonPath('$.token');
         $I->seeResponseCodeIs(200);
     }
@@ -77,18 +76,6 @@ class billingCest
         ]);
     }
 
-    //--------- Send Get Cards of user By ID---------------------//
-    /**
-     * @param ApiTester $I
-     * @before signInByPassword
-     */
-    public function sendGetCardsOfUserByID(ApiTester $I)
-    {
-        $this->userID = 30;
-        $I->sendGET('/users/'.$this->userID.'/cards');   //users/:id/cards
-        $I->seeResponseCodeIs(200);
-    }
-
     //-------------- Send Post Add Card By ID ---------------------------------//
     /**
      * @param ApiTester $I
@@ -97,12 +84,23 @@ class billingCest
      */
     public function sendPostAddCardByID(ApiTester $I)
     {
-        $this->userID = 30;
         $data = [
             'token' => 'tok_visa'
         ];
-        $I->sendPost('/users/'.$this->userID.'/cards', $data);
+        $I->sendPost('/users/30/cards', $data);
         $this->card_ID = $I->grabDataFromResponseByJsonPath('$.id');
+        $this->userID = $I->grabDataFromResponseByJsonPath('$.userId');
+        $I->seeResponseCodeIs(200);
+    }
+
+    //--------------- Send Get Cards of user By ID  ---------------------//
+    /**
+     * @param ApiTester $I
+     * @before signInByPassword
+     */
+    public function sendGetCardsOfUserByID(ApiTester $I)
+    {
+        $I->sendGET('/users/'.$this->userID[0].'/cards');   //users/:id/cards
         $I->seeResponseCodeIs(200);
     }
 
@@ -113,8 +111,7 @@ class billingCest
      */
     public function sendGetShowCardsOfUserByID(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendGET('/users/'.$this->userID.'/cards/'.$this->card_ID[0]);
+        $I->sendGET('/users/'.$this->userID[0].'/cards/'.$this->card_ID[0]);
         $I->seeResponseCodeIs(200);
     }
 
@@ -125,8 +122,7 @@ class billingCest
      */
     public function sendGetUserBalanceByID(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendGET('/users/'.$this->userID.'/balance');
+        $I->sendGET('/users/'.$this->userID[0].'/balance');
         $I->seeResponseCodeIs(200);
     }
 
@@ -135,10 +131,9 @@ class billingCest
      * @param ApiTester $I
      * @before signInByPassword
      */
-    public function sendPaymentHistoryByID(ApiTester $I)
+    public function sendGetPaymentHistoryByID(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendGET('/users/'.$this->userID.'/history');
+        $I->sendGET('/users/'.$this->userID[0].'/history');
         $I->seeResponseCodeIs(200);
     }
 
@@ -149,8 +144,7 @@ class billingCest
      */
     public function sendPostBuyTrainingByIDValid(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendPOST('/trainings/'.$this->userID.'/buy');
+        $I->sendPOST('/trainings/'.$this->userID[0].'/buy');
         $I->seeResponseCodeIs(200);
     }
 
@@ -158,8 +152,7 @@ class billingCest
 
     public function sendPostBuyTrainingByIDError(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendPOST('/trainings/'.$this->userID.'/buy');
+        $I->sendPOST('/trainings/'.$this->userID[0].'/buy');
         $I->seeResponseCodeIs(403);
         $I->seeResponseContainsJson([
             'message' => 'Login Required'
@@ -173,8 +166,7 @@ class billingCest
      */
     public function sendDeleteCardById(ApiTester $I)
     {
-        $this->userID = 30;
-        $I->sendDELETE('/users/'.$this->userID.'/cards/'.$this->card_ID[0]);
+        $I->sendDELETE('/users/'.$this->userID[0].'/cards/'.$this->card_ID[0]);
         $I->seeResponseCodeIs(204);
     }
 

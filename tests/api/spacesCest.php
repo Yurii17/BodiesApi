@@ -30,7 +30,7 @@ class spacesCest
     public function sendPostCreateNewSpaces(ApiTester $I)
     {
         $data = [
-            'locationId' => 206,
+            'locationId' => 210,
             'name' => 'Free wifi',
             'description' => fake::create()->text(20)
         ];

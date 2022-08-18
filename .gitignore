@@ -1,1 +1,4 @@
 vendor.idea
+composer.lock
+./data/_output
+./data/*
